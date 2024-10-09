@@ -62,7 +62,7 @@ public:
    * A five second interval between connection information displays
    * ------ MAY NOT BE NECESSARY ------
    */
-  const int intervalInfo = 5000;
+  const long intervalInfo = 5000;
 
   /*
    * A flag to display connection information
