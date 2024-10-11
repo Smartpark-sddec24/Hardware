@@ -7,7 +7,7 @@
 #define WifiConnection_h
 
 #include <Arduino.h>
-#include <WiFiNINA.h>
+#include <WiFiNINA.h> //Library by Arduino
 #include "arduino_secrets.h"
 
 class WifiConnection {

@@ -1,37 +1,30 @@
 #include "WifiConnection.h"
 #include "arduino_secrets.h"
-#include <DistanceSensor.h>
-
-// Will uses HTTPClient to 
+#include <DistanceSensor.h> //LIbrary by Segilmez06
+#include <HttpClient.h> //Library by Adrian McEwan
 
 //Distance Sensors
-//Sensor 1
-const int S1_Trig = 5;
-const int S1_Echo = 6;
-DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
-
-//Sensor 2
-const int S2_Trig = 7;
-const int S2_Echo = 8;
-DistanceSensor sensor2 = DistanceSensor(S2_Trig, S2_Echo);
-
-//Sensor 3
-const int S3_Trig = 9;
-const int S3_Echo = 10;
-DistanceSensor sensor3 = DistanceSensor(S3_Trig, S3_Echo);
-
 //Sensor 4
-const int S4_Trig = 11;
-const int S4_Echo = 12;
+const int S4_Trig = 5;
+const int S4_Echo = 6;
 DistanceSensor sensor4 = DistanceSensor(S4_Trig, S4_Echo);
 
+//Sensor 3
+const int S3_Trig = 7;
+const int S3_Echo = 8;
+DistanceSensor sensor3 = DistanceSensor(S3_Trig, S3_Echo);
+
+//Sensor 2
+const int S2_Trig = 9;
+const int S2_Echo = 10;
+DistanceSensor sensor2 = DistanceSensor(S2_Trig, S2_Echo);
+
+//Sensor 1
+const int S1_Trig = 11;
+const int S1_Echo = 12;
+DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
+
 int distance[4];
-
-const long measurementTiming = 50000;
-long mTime = 0;
-
-const long wifiInfoTiming = 25000;
-long wTime = 0;
 
 //WiFi vars
 char ssid[] = SECRET_SSID;
@@ -58,23 +51,12 @@ void setup() {
   pinMode(S4_Trig, OUTPUT);
   pinMode(S4_Echo, INPUT);
 
-  mTime = millis();
-  wTime = millis();
-
   wifiConnection.begin();
 }
 
 void loop() {
-  if (wTime - millis() >= wifiInfoTiming) {
-      wifiConnection.wifiInfo();
-      wTime = millis();
-  }
-  
-  if (mTime - millis() >= measurementTiming) {
-    takeMeasurements();
-    printMeasurements();
-    mTime = millis();
-  }
+  wifiConnection.wifiInfo();
+  takeMeasurements();
 }
 
 void takeMeasurements() {
@@ -90,22 +72,4 @@ void takeMeasurements() {
 
   distance[3] = sensor4.getCM();
   delay(100);
-}
-
-void printMeasurements() {
-  //Sensor 1 print
-  Serial.print("Sensor 1: ");
-  Serial.println(distance[0]);
-  
-  //Sensor 2 print
-  Serial.print("Sensor 2: ");
-  Serial.println(distance[1]);
-  
-  //Sensor 3 print
-  Serial.print("Sensor 3: ");
-  Serial.println(distance[2]);
-
-  //Sensor 4 print
-  Serial.print("Sensor 4: ");
-  Serial.println(distance[3]);
 }
