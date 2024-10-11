@@ -27,6 +27,12 @@ DistanceSensor sensor4 = DistanceSensor(S4_Trig, S4_Echo);
 
 int distance[4];
 
+const long measurementTiming = 50000;
+long mTime = 0;
+
+const long wifiInfoTiming = 25000;
+long wTime = 0;
+
 //WiFi vars
 char ssid[] = SECRET_SSID;
 WifiConnection wifiConnection(ssid);
@@ -52,12 +58,23 @@ void setup() {
   pinMode(S4_Trig, OUTPUT);
   pinMode(S4_Echo, INPUT);
 
+  mTime = millis();
+  wTime = millis();
+
   wifiConnection.begin();
 }
 
 void loop() {
-  wifiConnection.wifiInfo();
-  takemeasurements();
+  if (wTime - millis() >= wifiInfoTiming) {
+      wifiConnection.wifiInfo();
+      wTime = millis();
+  }
+  
+  if (mTime - millis() >= measurementTiming) {
+    takeMeasurements();
+    printMeasurements();
+    mTime = millis();
+  }
 }
 
 void takeMeasurements() {
@@ -73,4 +90,22 @@ void takeMeasurements() {
 
   distance[3] = sensor4.getCM();
   delay(100);
+}
+
+void printMeasurements() {
+  //Sensor 1 print
+  Serial.print("Sensor 1: ");
+  Serial.println(distance[0]);
+  
+  //Sensor 2 print
+  Serial.print("Sensor 2: ");
+  Serial.println(distance[1]);
+  
+  //Sensor 3 print
+  Serial.print("Sensor 3: ");
+  Serial.println(distance[2]);
+
+  //Sensor 4 print
+  Serial.print("Sensor 4: ");
+  Serial.println(distance[3]);
 }

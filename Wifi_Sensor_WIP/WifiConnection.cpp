@@ -75,7 +75,6 @@ void WifiConnection ::checkConnectionStatus() {
 
   Serial.print("Status: ");
   Serial.print(status);
-  Serial.print(": ");
   
   switch(status) {
     case 0:
