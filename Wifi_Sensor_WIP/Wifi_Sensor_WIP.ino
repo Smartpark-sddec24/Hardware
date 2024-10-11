@@ -57,6 +57,9 @@ void setup() {
 void loop() {
   wifiConnection.wifiInfo();
   takeMeasurements();
+
+  Serial.print("Sensor 1: ");
+  Serial.println(distance[0]);
 }
 
 void takeMeasurements() {
