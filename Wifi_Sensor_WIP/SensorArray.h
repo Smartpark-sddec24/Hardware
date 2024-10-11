@@ -15,7 +15,7 @@ class SensorArray {
      * @param trigArr - an array of trigger pin values
      * @param echoArr - an array of echo pin values
      */
-    SensorArray(const int* trigArr, const int* echoArr);
+    SensorArray();
     
     /*
      * Iterates through the array of sensors and measures the distances
@@ -26,9 +26,24 @@ class SensorArray {
     /*
      * An array to store measured distance measurements
      */
-    double[4] distances;
+    double distances[4];
     /*
      * An array of ultrasonic distance sensors
      */
-    DistanceSensor[4] array;
-}
+    DistanceSensor sensorArray[] = {DistanceSensor(trigArr[0], echoArr[0]),
+                                    DistanceSensor(trigArr[1], echoArr[1]),
+                                    DistanceSensor(trigArr[2], echoArr[2]),
+                                    DistanceSensor(trigArr[3], echoArr[3])};
+
+    /*
+     * An array of trigger pins for the sensors
+     */
+    int trigArr[] = {5, 7, 9, 11};
+
+    /*
+     * An array of echo pins for the sensors
+     */
+    int echoArr[] = {6, 8, 10, 12};
+};
+
+#endif
