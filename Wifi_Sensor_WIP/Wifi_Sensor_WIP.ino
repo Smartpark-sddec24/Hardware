@@ -1,6 +1,6 @@
 #include "WifiConnection.h"
 #include "arduino_secrets.h"
-#include <DistanceSensor.h> //LIbrary by Segilmez06
+#include <DistanceSensor.h> //Library by Segilmez06
 #include <HttpClient.h> //Library by Adrian McEwan
 
 //Distance Sensors
