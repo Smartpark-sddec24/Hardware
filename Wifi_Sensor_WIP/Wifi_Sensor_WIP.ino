@@ -1,7 +1,8 @@
 #include "WifiConnection.h"
 #include "arduino_secrets.h"
-#include <DistanceSensor.h> //LIbrary by Segilmez06
-#include <HttpClient.h> //Library by Adrian McEwan
+#include <DistanceSensor.h> //Library by Segilmez06
+//#include <HttpClient.h> //Library by Adrian McEwan
+#include <ArduinoHttpClient.h>
 
 //Distance Sensors
 //Sensor 4
@@ -29,6 +30,11 @@ int distance[4];
 //WiFi vars
 char ssid[] = SECRET_SSID;
 WifiConnection wifiConnection(ssid);
+
+//HTTP Requests
+char host[] = "https://postman-echo.com";
+char uuid[] = "get"/*UUID*/;
+// HttpClient client = HttpClient(wifi, host, 443);
 
 void setup() {
   Serial.begin(9600);
@@ -58,8 +64,10 @@ void loop() {
   wifiConnection.wifiInfo();
   takeMeasurements();
 
+
   Serial.print("Sensor 1: ");
   Serial.println(distance[0]);
+
 }
 
 void takeMeasurements() {
