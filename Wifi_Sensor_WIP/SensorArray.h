@@ -4,6 +4,15 @@
 #include <Arduino.h>
 #include <DistanceSensor.h>
 
+// struct SensorArrayStruct {
+//   SensorArrayStruct(int* trigArr, int* echoArr);
+
+//   DistanceSensor sensor1;
+//   DistanceSensor sensor2;
+//   DistanceSensor sensor3;
+//   DistanceSensor sensor4;
+// };
+
 class SensorArray {
   public:
     /*
@@ -31,20 +40,41 @@ class SensorArray {
     /*
      * An array of trigger pins for the sensors
      */
-    int trigArr[4] = {5, 7, 9, 11};
+    // const int trigArr[4] = {5, 7, 9, 11};
 
-    /*
-     * An array of echo pins for the sensors
-     */
-    int echoArr[4] = {6, 8, 10, 12};
+    // /*
+    //  * An array of echo pins for the sensors
+    //  */
+    // const int echoArr[4] = {6, 8, 10, 12};
+
+    // struct trigPinStruct {
+    //   trigPinStruct();
+
+    //   const int s1_pin = 5;
+    //   const int s2_pin = 7;
+    //   const int s3_pin = 9;
+    //   const int s4_pin = 11;
+    // };
+
+    // trigPinStruct trigPins;
+
+    // struct echoPinStruct {
+    //   echoPinStruct();
+
+    //   const int s1_pin = 6;
+    //   const int s2_pin = 8;
+    //   const int s3_pin = 10;
+    //   const int s4_pin = 12;
+    // };
+
+    // echoPinStruct echoPins;
+
+    //SensorArrayStruct sensorArray;
     
     /*
      * An array of ultrasonic distance sensors
      */
-    DistanceSensor sensorArray[4] = {DistanceSensor(trigArr[0], echoArr[0]),
-                                     DistanceSensor(trigArr[1], echoArr[1]),
-                                     DistanceSensor(trigArr[2], echoArr[2]),
-                                     DistanceSensor(trigArr[3], echoArr[3])};
+    DistanceSensor sensorArray[4];
 };
 
 #endif
