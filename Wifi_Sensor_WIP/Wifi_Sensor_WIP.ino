@@ -1,7 +1,7 @@
 #include "WifiConnection.h"
 #include "arduino_secrets.h"
 #include <DistanceSensor.h> //Library by Segilmez06
-#include <HttpClient.h> //Library by Adrian McEwan
+//#include <HttpClient.h> //Library by Adrian McEwan
 
 //Distance Sensors
 //Sensor 4
@@ -75,4 +75,4 @@ void loop() {
 
 //   distance[3] = sensor4.getCM();
 //   delay(100);
-// }
+// }66

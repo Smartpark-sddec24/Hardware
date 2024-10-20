@@ -2,7 +2,7 @@
 #include "SensorArray.h"
 #include <DistanceSensor.h>
 
-SensorArray ::SensorArray() {
-  setSensor(0);
+// SensorArray ::SensorArray() {
+//   setSensor(0);
 
-}
+// }

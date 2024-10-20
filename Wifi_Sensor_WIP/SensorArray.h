@@ -41,7 +41,7 @@ class SensorArray {
     /*
      * An array of ultrasonic distance sensors
      */
-    sensorArray[4];
+    DistanceSensor sensorArray[4];
 };
 
 #endif
