@@ -12,10 +12,12 @@ class SensorArray {
      *    are meant to be assigned in pairs, i.e. trigArr[0] will be mapped
      *    to the same sensor as echoArr[0]
      */
-    // SensorArray();
+    SensorArray();
     
-    void setSensor(int sensorArrayIndex) {
-      DistanceSensor sensor(5, 6);
+    /*
+     * This method intializes 
+     */
+    void setSensors(DistanceSensor sensor, int sensorArrayIndex) {
       this->sensorArray[sensorArrayIndex] = sensor;
     }
 
