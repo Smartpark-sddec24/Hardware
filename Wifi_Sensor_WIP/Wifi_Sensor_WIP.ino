@@ -61,14 +61,14 @@ void loop() {
   // wifiConnection.wifiInfo();
   takeMeasurements();
 
-  sensorArray.setStatus(sensor1, 0);
-  // Serial.print("Sensor 1 dist: ");
-  // Serial.println(/*sensor1.getCM()*/distance[0]);
-  Serial.print("Status: ");
-  Serial.println(sensorArray.getStatus(0));
+  //sensorArray.setStatus(sensor1, 0);
+  // // Serial.print("Sensor 1 dist: ");
+  // // Serial.println(/*sensor1.getCM()*/distance[0]);
+  // Serial.print("Status: ");
+  // Serial.println(sensorArray.getStatus(0));
 
-  // Serial.print("Sensor 1: ");
-  // Serial.println(distance[0]);
+  Serial.print("Sensor 1: ");
+  Serial.println(distance[0]);
 }
 
 void takeMeasurements() {

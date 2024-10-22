@@ -12,8 +12,8 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   // Serial.println("In setStatus");
   // Serial.println(sensor.getCM());
   int dist = sensor.getCM();
-  Serial.print("Dist: ");
-  Serial.println(dist);
+  // Serial.print("Dist: ");
+  // Serial.println(dist);
   if (dist <= 30.0) {
     // Serial.print("Status from setStatus: ");
     // Serial.println(spotStatus[statusIndex]);
