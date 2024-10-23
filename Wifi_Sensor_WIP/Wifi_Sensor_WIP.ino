@@ -29,6 +29,12 @@ SensorArray sensorArray = SensorArray();
 
 int distance[4];
 
+//LED Pin Assignments
+int redPin= 13;
+int greenPin = A6;
+int bluePin = A7;
+int lotnum = 0;
+
 // //WiFi vars
 // char ssid[] = SECRET_SSID;
 // WifiConnection wifiConnection(ssid);
@@ -54,6 +60,11 @@ void setup() {
   pinMode(S4_Trig, OUTPUT);
   pinMode(S4_Echo, INPUT);
 
+  //RGB LED Pin Mode
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+
   // wifiConnection.begin();
 }
 
@@ -69,6 +80,22 @@ void loop() {
 
   Serial.print("Sensor 1: ");
   Serial.println(distance[0]);
+
+  //RGB Color Rotations
+    for (lotnum == 0; lotnum <=3; lotnum++){
+    if (lotnum == 1){
+      setColor(0,255,0); //Green 
+      delay(3000);
+    }
+    if (lotnum == 2){
+      setColor(0,0,255); //White
+      delay(3000);
+    }
+    if (lotnum == 3){
+      setColor(255,0,0); //Red
+      delay(3000);
+    }
+  }
 }
 
 void takeMeasurements() {
@@ -84,4 +111,11 @@ void takeMeasurements() {
 
   distance[3] = sensor4.getCM();
   delay(100);
+}
+
+void setColor(int redValue, int greenValue, int blueValue) {
+  //Writing to LED
+  digitalWrite(redPin, redValue);
+  digitalWrite(greenPin, greenValue);
+  digitalWrite(bluePin, blueValue);
 }
