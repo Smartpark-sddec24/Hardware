@@ -1,7 +1,8 @@
 #include "WifiConnection.h"
+#include "SensorArray.h"
 #include "arduino_secrets.h"
-#include <DistanceSensor.h> //LIbrary by Segilmez06
-#include <HttpClient.h> //Library by Adrian McEwan
+#include <DistanceSensor.h> //Library by Segilmez06
+//#include <HttpClient.h> //Library by Adrian McEwan
 
 //Distance Sensors
 //Sensor 4
@@ -24,18 +25,20 @@ const int S1_Trig = 11;
 const int S1_Echo = 12;
 DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
 
+SensorArray sensorArray = SensorArray();
+
 int distance[4];
 
-//WiFi vars
-char ssid[] = SECRET_SSID;
-WifiConnection wifiConnection(ssid);
+// //WiFi vars
+// char ssid[] = SECRET_SSID;
+// WifiConnection wifiConnection(ssid);
 
 void setup() {
   Serial.begin(9600);
   delay(5000);
-  Serial.println("WiFi connection begin");
+  // Serial.println("WiFi connection begin");
 
-  //Sensor 1 Pin Mode
+  // Sensor 1 Pin Mode
   pinMode(S1_Trig, OUTPUT);
   pinMode(S1_Echo, INPUT);
 
@@ -51,12 +54,18 @@ void setup() {
   pinMode(S4_Trig, OUTPUT);
   pinMode(S4_Echo, INPUT);
 
-  wifiConnection.begin();
+  // wifiConnection.begin();
 }
 
 void loop() {
-  wifiConnection.wifiInfo();
+  // wifiConnection.wifiInfo();
   takeMeasurements();
+
+  //sensorArray.setStatus(sensor1, 0);
+  // // Serial.print("Sensor 1 dist: ");
+  // // Serial.println(/*sensor1.getCM()*/distance[0]);
+  // Serial.print("Status: ");
+  // Serial.println(sensorArray.getStatus(0));
 
   Serial.print("Sensor 1: ");
   Serial.println(distance[0]);
