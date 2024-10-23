@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include <DistanceSensor.h>
 
+/**
+ * This class represents a sensor
+ */
 class SensorArray {
   public:
     SensorArray();
