@@ -66,73 +66,93 @@ const int kNetworkTimeout = 30*1000;
 void loop()
 {
   int err =0;
-  
-  err = https.get("/getStatus");
-  if (err == 0)
-  {
-    Serial.println("startedRequest ok");
+  String postData;
+  int status=5;
+  int id=1;
+  String contentType = "text/plain";
+  postData="status=%d&id=%d", status, id;
+  Serial.println("making POST request");
+  https.post("/setState?",contentType, postData);
 
-    err = https.responseStatusCode();
-    if (err >= 0)
-    {
-      Serial.print("Got status code: ");
-      Serial.println(err);
+  // read the status code and body of the response
+  int statusCode = https.responseStatusCode();
+  String response = https.responseBody();
 
-      // Usually you'd check that the response code is 200 or a
-      // similar "success" code (200-299) before carrying on,
-      // but we'll print out whatever response we get
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
+  Serial.print("Response: ");
+  Serial.println(response);
 
-      // If you are interesting in the response headers, you
-      // can read them here:
-      //while(http.headerAvailable())
-      //{
-      //  String headerName = http.readHeaderName();
-      //  String headerValue = http.readHeaderValue();
-      //}
+  Serial.println("Wait five seconds");
+  delay(5000);
 
-      int bodyLen = https.contentLength();
-      Serial.print("Content length is: ");
-      Serial.println(bodyLen);
-      Serial.println();
-      Serial.println("Body returned follows:");
+  // GET REQUEST--------------------------------------
+  // err = https.get("/getStatus");
+  // if (err == 0)
+  // {
+  //   Serial.println("startedRequest ok");
+
+  //   err = https.responseStatusCode();
+  //   if (err >= 0)
+  //   {
+  //     Serial.print("Got status code: ");
+  //     Serial.println(err);
+
+  //     // Usually you'd check that the response code is 200 or a
+  //     // similar "success" code (200-299) before carrying on,
+  //     // but we'll print out whatever response we get
+
+  //     // If you are interesting in the response headers, you
+  //     // can read them here:
+  //     //while(http.headerAvailable())
+  //     //{
+  //     //  String headerName = http.readHeaderName();
+  //     //  String headerValue = http.readHeaderValue();
+  //     //}
+
+  //     int bodyLen = https.contentLength();
+  //     Serial.print("Content length is: ");
+  //     Serial.println(bodyLen);
+  //     Serial.println();
+  //     Serial.println("Body returned follows:");
     
-      // Now we've got to the body, so we can print it out
-      unsigned long timeoutStart = millis();
-      char c;
-      // Whilst we haven't timed out & haven't reached the end of the body
-      while ( (https.connected() || https.available()) &&
-             (!https.endOfBodyReached()) &&
-             ((millis() - timeoutStart) < kNetworkTimeout) )
-      {
-          if (https.available())
-          {
-              c = https.read();
-              // Print out this character
-              Serial.print(c);
+  //     // Now we've got to the body, so we can print it out
+  //     unsigned long timeoutStart = millis();
+  //     char c;
+  //     // Whilst we haven't timed out & haven't reached the end of the body
+  //     while ( (https.connected() || https.available()) &&
+  //            (!https.endOfBodyReached()) &&
+  //            ((millis() - timeoutStart) < kNetworkTimeout) )
+  //     {
+  //         if (https.available())
+  //         {
+  //             c = https.read();
+  //             // Print out this character
+  //             Serial.print(c);
              
-              // We read something, reset the timeout counter
-              timeoutStart = millis();
-          }
-          else
-          {
-              // We haven't got any data, so let's pause to allow some to
-              // arrive
-              delay(kNetworkDelay);
-          }
-      }
-    }
-    else
-    {    
-      Serial.print("Getting response failed: ");
-      Serial.println(err);
-    }
-  }
-  else
-  {
-    Serial.print("Connect failed: ");
-    Serial.println(err);
-  }
-  https.stop();
+  //             // We read something, reset the timeout counter
+  //             timeoutStart = millis();
+  //         }
+  //         else
+  //         {
+  //             // We haven't got any data, so let's pause to allow some to
+  //             // arrive
+  //             delay(kNetworkDelay);
+  //         }
+  //     }
+  //   }
+  //   else
+  //   {    
+  //     Serial.print("Getting response failed: ");
+  //     Serial.println(err);
+  //   }
+  // }
+  // else
+  // {
+  //   Serial.print("Connect failed: ");
+  //   Serial.println(err);
+  // }
+  // https.stop();
 
   // And just stop, now that we've tried a download
   while(1);
@@ -145,17 +165,17 @@ void loop()
 
 }
 
-void takeMeasurements() {
-    //Taking measurement.
-  distance[0] = sensor1.getCM();
-  delay(100);
+// void takeMeasurements() {
+//     //Taking measurement.
+//   distance[0] = sensor1.getCM();
+//   delay(100);
 
-  distance[1] = sensor2.getCM();
-  delay(100);
+//   distance[1] = sensor2.getCM();
+//   delay(100);
 
-  distance[2] = sensor3.getCM();
-  delay(100);
+//   distance[2] = sensor3.getCM();
+//   delay(100);
 
-  distance[3] = sensor4.getCM();
-  delay(100);
-}
+//   distance[3] = sensor4.getCM();
+//   delay(100);
+// }
