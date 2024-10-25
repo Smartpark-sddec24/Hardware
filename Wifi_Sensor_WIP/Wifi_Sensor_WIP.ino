@@ -1,7 +1,7 @@
 #include "WifiConnection.h"
 #include "SensorArray.h"
 #include "arduino_secrets.h"
-#include <DistanceSensor.h> //Library by Segilmez06
+#include <DistanceSensor.h>  //Library by Segilmez06
 #include <ArduinoHttpClient.h>
 
 //Distance Sensors
@@ -27,11 +27,12 @@ DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
 
 SensorArray sensorArray = SensorArray();
 
+DistanceSensor arrTest[] = { sensor1, sensor2, sensor3, sensor4 };
 int distance[4];
 
 // //WiFi vars
-// char ssid[] = SECRET_SSID;
-// WifiConnection wifiConnection(ssid);
+char ssid[] = SECRET_SSID;
+WifiConnection wifiConnection(ssid);
 
 //HTTP Requests
 WiFiClient wifi;
@@ -42,7 +43,7 @@ HttpClient https(wifi, host);
 void setup() {
   Serial.begin(9600);
   delay(5000);
-  // Serial.println("WiFi connection begin");
+  Serial.println("WiFi connection begin");
 
   // Sensor 1 Pin Mode
   pinMode(S1_Trig, OUTPUT);
@@ -60,7 +61,7 @@ void setup() {
   pinMode(S4_Trig, OUTPUT);
   pinMode(S4_Echo, INPUT);
 
-  // wifiConnection.begin();
+  wifiConnection.begin();
 }
 
 const int kNetworkDelay = 1000;
@@ -76,11 +77,16 @@ void loop() {
   // Serial.print("Status: ");
   // Serial.println(sensorArray.getStatus(0));
 
-  Serial.print("Sensor 1: ");
-  Serial.println(distance[0]);
-
+  // Serial.print("Sensor 1: ");
+  // Serial.println(distance[0]);
+  Serial.println(arrTest[0].getCM());
   getRequest();
-  postRequest();
+  for (int i = 0; i < 4; i++) {
+    
+    sensorArray.setStatus(arrTest[i], i);
+    postRequest(sensorArray.getStatus(i), i);
+  }
+
 
 
   // And just stop, now that we've tried a download
@@ -123,10 +129,8 @@ void getRequest() {
   Serial.println(response);
 }
 
-void postRequest() {
+void postRequest(int status, int id) {
   String postData;
-  int status = 5;
-  int id = 1;
   String contentType = "text/plain";
   postData = "status=%d&id=%d", status, id;
   Serial.println("making POST request");
@@ -144,10 +148,8 @@ void postRequest() {
   delay(5000);
 }
 
-void putRequest() {
+void putRequest(int status, int id) {
   String putData;
-  int status = 5;
-  int id = 1;
   String contentType = "text/plain";
   putData = "status=%d&id=%d", status, id;
   Serial.println("making PUT request");
