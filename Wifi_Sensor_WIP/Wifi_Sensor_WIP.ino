@@ -1,9 +1,9 @@
 #include "WifiConnection.h"
 #include "SensorArray.h"
 #include "arduino_secrets.h"
-#include <DistanceSensor.h> //Library by Segilmez06
+#include <DistanceSensor.h>  //Library by Segilmez06
 #include <ArduinoHttpClient.h>
-
+#include <string.h>
 //Distance Sensors
 //Sensor 4
 const int S4_Trig = 5;
@@ -30,20 +30,21 @@ SensorArray sensorArray = SensorArray();
 int distance[4];
 
 //LED Pin Assignments
-int redPin= 13;
-int greenPin = A6;
-int bluePin = A7;
-int lotnum = 0;
+int redPin[] = {19, 16};
+int greenPin[] = { 20, 17 };
+int bluePin[] = { 21, 18 };
+
 
 // //WiFi vars
-// char ssid[] = SECRET_SSID;
-// WifiConnection wifiConnection(ssid);
+char ssid[] = SECRET_SSID;
+WifiConnection wifiConnection(ssid);
 
 //HTTP Requests
 WiFiClient wifi;
 char host[] = "f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io";
 // char uuid[] = /*"get"/*UUID*/;
 HttpClient https(wifi, host);
+
 
 void setup() {
   Serial.begin(9600);
@@ -67,11 +68,10 @@ void setup() {
   pinMode(S4_Echo, INPUT);
 
   //RGB LED Pin Mode
-  pinMode(redPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
+  LEDsetup();
 
-  // wifiConnection.begin();
+
+  wifiConnection.begin();
 }
 
 const int kNetworkDelay = 1000;
@@ -90,9 +90,13 @@ void loop() {
   Serial.print("Sensor 1: ");
   Serial.println(distance[0]);
 
-  getRequest();
-  postRequest();
-
+  int status = getRequest();
+  // postRequest();
+  
+  for (int i = 0; i < 4; i++) {
+    setLED(i,status);
+    status= 1;
+  }
 
   // And just stop, now that we've tried a download
   while (1)
@@ -103,43 +107,14 @@ void loop() {
 
   // Serial.print("Sensor 1: ");
   // Serial.println(distance[0]);
-
-  //RGB Color Rotations
-    for (lotnum == 0; lotnum <=3; lotnum++){
-    if (lotnum == 1){
-      setColor(0,255,0); //Green 
-      delay(3000);
-    }
-    if (lotnum == 2){
-      setColor(0,0,255); //White
-      delay(3000);
-    }
-    if (lotnum == 3){
-      setColor(255,0,0); //Red
-      delay(3000);
-    }
-  }
 }
 
-// void takeMeasurements() {
-//     //Taking measurement.
-//   distance[0] = sensor1.getCM();
-//   delay(100);
 
-//   distance[1] = sensor2.getCM();
-//   delay(100);
 
-//   distance[2] = sensor3.getCM();
-//   delay(100);
-
-//   distance[3] = sensor4.getCM();
-//   delay(100);
-// }
-
-void getRequest() {
+int getRequest() {
   // GET REQUEST--------------------------------------
   Serial.println("making GET request");
-  int err = 0;
+  int err = 0, intResponse;
   err = https.get("/getStatus");
   int statusCode = https.responseStatusCode();
   String response = https.responseBody();
@@ -148,6 +123,8 @@ void getRequest() {
   Serial.println(statusCode);
   Serial.print("Response: ");
   Serial.println(response);
+  intResponse = response.toInt();
+  return intResponse;
 }
 
 void postRequest() {
@@ -193,10 +170,33 @@ void putRequest() {
   distance[3] = sensor4.getCM();
   delay(100);
 }
-
-void setColor(int redValue, int greenValue, int blueValue) {
+// LED ---------------------------
+void LEDsetup() {
+  //RGB LED Pin Mode
+  for (int i = 0; i < 2; i++) {
+    pinMode(redPin[i], OUTPUT);
+    pinMode(greenPin[i], OUTPUT);
+    pinMode(bluePin[i], OUTPUT);
+  }
+}
+void setLED(int index, int status) {
+  // int status = getRequest();
+  Serial.print("setLED status:");
+  Serial.println(status);
+  if (status == 0) {
+    Serial.println("green");
+    setColor(0, 255, 0,index);  //Green
+  } else if (status == 1) {
+    Serial.println("red");
+    setColor(255, 0, 0,index);  //Red
+  } else {
+    Serial.println("white");
+    setColor(255, 255, 255,index);  //White
+  }
+}
+void setColor(int redValue, int greenValue, int blueValue, int index) {
   //Writing to LED
-  digitalWrite(redPin, redValue);
-  digitalWrite(greenPin, greenValue);
-  digitalWrite(bluePin, blueValue);
+    digitalWrite(redPin[index], redValue);
+    digitalWrite(greenPin[index], greenValue);
+    digitalWrite(bluePin[index], blueValue);
 }
