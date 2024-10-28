@@ -28,7 +28,6 @@ void WifiConnection ::begin() {
     // Connect to WPA/WPA2 network:
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
-    
     // wait 10 seconds for connection:
     delay(10000);
   }
