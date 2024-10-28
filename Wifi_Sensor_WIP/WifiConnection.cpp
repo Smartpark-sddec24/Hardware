@@ -63,11 +63,6 @@ void WifiConnection ::wifiInfo() {
       Serial.print("Status: ");
       checkConnectionStatus();
     }
-  //}
-  // interval++;
-  // if (status != WL_CONNECTED) {
-  //   interval = 0;
-  // }
 }
 
 void WifiConnection ::checkConnectionStatus() {
@@ -114,8 +109,13 @@ void WifiConnection ::disconnect() {
 }
 
 void WifiConnection ::reconnect() {
+  int attempts = 0;
   while (status != WL_CONNECTED) {
+    if (attempts > 2) {
+      NVIC_SystemReset();
+    }
     status = WiFi.begin(_ssid);
+    attempts ++;
     delay(5000); // This delay can be changed based on our real-time data needs
   }
 }

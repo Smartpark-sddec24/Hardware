@@ -21,11 +21,3 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
 int SensorArray ::getStatus(int statusIndex) {
   return spotStatus[statusIndex];
 }
-
-struct Sensor {
-  DistanceSensor sensor;
-  const int trigPin;
-  const int echoPin;
-};
-
-Sensor sensorArray[4];
