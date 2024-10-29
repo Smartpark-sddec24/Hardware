@@ -39,6 +39,17 @@ public:
   
   /*
    * Checks the connection status and reconnects upon a disconnect
+   *    Status codes:
+   *      0: System idle
+   *      1: No SSID available
+   *      2: Scan for networks completed
+   *      3: Connected to the network with SSID "_ssid"
+   *      4: Connection failed
+   *      5: Connection lost
+   *          In this case, see reconnect() below
+   *      6: Disconnected
+   *      255: No WiFi shield detected
+   *      Other: Unknown code
    */
   void checkConnectionStatus();
 
@@ -78,6 +89,7 @@ public:
 private:
   /*
    * This function reconnects the board to the network
+   * In the case of up to three faild reconnects, this function restarts the system
    */
   void reconnect();
   /*

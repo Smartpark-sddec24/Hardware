@@ -20,7 +20,6 @@ WifiConnection ::WifiConnection(const char* ssid) {
 }
 
 void WifiConnection ::begin() {
-  // Serial.print(_ssid);
   while (status != WL_CONNECTED) {  // While the connection is not successful
     Serial.print("Attempting to connect to network: ");
     Serial.println(_ssid);
@@ -59,7 +58,6 @@ void WifiConnection ::wifiInfo() {
 
       // Get the connection status
       status = WiFi.status();
-      Serial.print("Status: ");
       checkConnectionStatus();
     }
 }
