@@ -30,9 +30,9 @@ SensorArray sensorArray = SensorArray();
 int distance[4];
 
 //LED Pin Assignments
-int redPin[] = {19, 16};
-int greenPin[] = { 20, 17 };
-int bluePin[] = { 21, 18 };
+int redPin[] = { 16, 19 };
+int greenPin[] = { 17, 20 };
+int bluePin[] = { 18, 21 };
 
 
 // //WiFi vars
@@ -45,6 +45,8 @@ char host[] = "f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io";
 // char uuid[] = /*"get"/*UUID*/;
 HttpClient https(wifi, host);
 
+const int kNetworkDelay = 1000;
+const int kNetworkTimeout = 30 * 1000;
 
 void setup() {
   Serial.begin(9600);
@@ -74,8 +76,6 @@ void setup() {
   wifiConnection.begin();
 }
 
-const int kNetworkDelay = 1000;
-const int kNetworkTimeout = 30 * 1000;
 
 void loop() {
   // wifiConnection.wifiInfo();
@@ -91,9 +91,8 @@ void loop() {
   Serial.println(distance[0]);
 
   int status = getRequest();
-  // postRequest();
   
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 2; i++) {
     setLED(i,status);
     status= 1;
   }
@@ -185,18 +184,18 @@ void setLED(int index, int status) {
   Serial.println(status);
   if (status == 0) {
     Serial.println("green");
-    setColor(0, 255, 0,index);  //Green
+    setColor(0, 255, 0, index);  //Green
   } else if (status == 1) {
     Serial.println("red");
-    setColor(255, 0, 0,index);  //Red
+    setColor(255, 0, 0, index);  //Red
   } else {
     Serial.println("white");
-    setColor(255, 255, 255,index);  //White
+    setColor(255, 0, 255, index);  //White
   }
 }
 void setColor(int redValue, int greenValue, int blueValue, int index) {
   //Writing to LED
-    digitalWrite(redPin[index], redValue);
-    digitalWrite(greenPin[index], greenValue);
-    digitalWrite(bluePin[index], blueValue);
+  digitalWrite(redPin[index], redValue);
+  digitalWrite(greenPin[index], greenValue);
+  digitalWrite(bluePin[index], blueValue);
 }
