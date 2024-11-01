@@ -5,29 +5,35 @@
 #include <ArduinoHttpClient.h>
 #include <string.h>
 //Distance Sensors
-//Sensor 4
-const int S4_Trig = 5;
-const int S4_Echo = 6;
-DistanceSensor sensor4 = DistanceSensor(S4_Trig, S4_Echo);
+int S_Trig[] = { 5, 7, 9, 11 }; 
+int S_Echo[] = { 6, 8, 10, 12 };
+DistanceSensor sensorArr[] = {
+    DistanceSensor(S_Trig[0], S_Echo[0]),
+    DistanceSensor(S_Trig[1], S_Echo[1]),
+    DistanceSensor(S_Trig[2], S_Echo[2]),
+    DistanceSensor(S_Trig[3], S_Echo[3])
+};
+
+// DistanceSensor sensor4 = DistanceSensor(S4_Trig, S4_Echo);
 
 //Sensor 3
-const int S3_Trig = 7;
-const int S3_Echo = 8;
-DistanceSensor sensor3 = DistanceSensor(S3_Trig, S3_Echo);
+// const int S3_Trig = 7;
+// const int S3_Echo = 8;
+// DistanceSensor sensor3 = DistanceSensor(S3_Trig, S3_Echo);
 
-//Sensor 2
-const int S2_Trig = 9;
-const int S2_Echo = 10;
-DistanceSensor sensor2 = DistanceSensor(S2_Trig, S2_Echo);
+// //Sensor 2
+// const int S2_Trig = 9;
+// const int S2_Echo = 10;
+// DistanceSensor sensor2 = DistanceSensor(S2_Trig, S2_Echo);
 
-//Sensor 1
-const int S1_Trig = 11;
-const int S1_Echo = 12;
-DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
+// //Sensor 1
+// const int S1_Trig = 11;
+// const int S1_Echo = 12;
+// DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
 
-SensorArray sensorArray = SensorArray();
+SensorArray sensorArrayLIB = SensorArray();
 
-DistanceSensor arrTest[] = { sensor1, sensor2, sensor3, sensor4 };
+// DistanceSensor arrTest[] = { sensor1, sensor2, sensor3, sensor4 };
 int distance[4];
 
 //LED Pin Assignments
@@ -54,26 +60,32 @@ void setup() {
   delay(5000);
   Serial.println("WiFi connection begin");
 
-  // Sensor 1 Pin Mode
-  pinMode(S1_Trig, OUTPUT);
-  pinMode(S1_Echo, INPUT);
+  // // Sensor 1 Pin Mode
+  // pinMode(S1_Trig, OUTPUT);
+  // pinMode(S1_Echo, INPUT);
 
-  //Sensor 2 Pin Mode
-  pinMode(S2_Trig, OUTPUT);
-  pinMode(S2_Echo, INPUT);
+  // //Sensor 2 Pin Mode
+  // pinMode(S2_Trig, OUTPUT);
+  // pinMode(S2_Echo, INPUT);
 
-  //Sensor 3 Pin Mode
-  pinMode(S3_Trig, OUTPUT);
-  pinMode(S3_Echo, INPUT);
+  // //Sensor 3 Pin Mode
+  // pinMode(S3_Trig, OUTPUT);
+  // pinMode(S3_Echo, INPUT);
 
-  //Sensor 4 Pin Mode
-  pinMode(S4_Trig, OUTPUT);
-  pinMode(S4_Echo, INPUT);
+  // //Sensor 4 Pin Mode
+  // pinMode(S4_Trig, OUTPUT);
+  // pinMode(S4_Echo, INPUT);
+   // Initialize sensors in setup() using a loop
+  for (int i = 0; i < 4; i++) {
+    sensorArr[i] = DistanceSensor(S_Trig[i], S_Echo[i]);
+  }
 
+  // Sensor Pin mode
+  sensorArrayLIB.SensorSetup(S_Trig, S_Echo);
   //RGB LED Pin Mode
   LEDsetup();
-  
-  wifiConnection.begin();
+
+  // wifiConnection.begin();
 }
 
 
@@ -81,35 +93,33 @@ void loop() {
   // wifiConnection.wifiInfo();
   //takeMeasurements();
 
-  //sensorArray.setStatus(sensor1, 0);
+  //sensorArrayLIB.setStatus(sensor1, 0);
   // // Serial.print("Sensor 1 dist: ");
   // // Serial.println(/*sensor1.getCM()*/distance[0]);
   // Serial.print("Status: ");
-  // Serial.println(sensorArray.getStatus(0));
-
-  // Serial.print("Sensor 1: ");
-  // Serial.println(distance[0]);
-  Serial.println(arrTest[0].getCM());
-  getRequest();
-  for (int i = 0; i < 4; i++) {
-    
-    sensorArray.setStatus(arrTest[i], i);
-    postRequest(sensorArray.getStatus(i), i);
-  }
+  // Serial.println(sensorArrayLIB.getStatus(0));
 
   Serial.print("Sensor 1: ");
-  Serial.println(distance[0]);
+  Serial.println(sensorArr[0].getCM());
+  // getRequest();
+  // for (int i = 0; i < 4; i++) {
 
-  int status = getRequest();
+    // sensorArrayLIB.setStatus(arrTest[i], i);
+    // postRequest(sensorArrayLIB.getStatus(i), i);
+  // }
+
   
-  for (int i = 0; i < 2; i++) {
-    setLED(i,status);
-    status= 1;
-  }
+
+  // int status = getRequest();
+
+  // for (int i = 0; i < 2; i++) {
+  //   setLED(i, status);
+  //   status = 1;
+  // }
 
   // And just stop, now that we've tried a download
-  while (1)
-    ;
+  // while (1)
+  //   ;
   // wifiConnection.wifiInfo();
   // takeMeasurements();
 
@@ -173,7 +183,7 @@ void putRequest(int status, int id) {
   Serial.println(response);
 
   delay(5000);
-  distance[3] = sensor4.getCM();
+  // distance[3] = sensor4.getCM();
   delay(100);
 }
 // LED ---------------------------

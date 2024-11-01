@@ -3,7 +3,7 @@
 #include <DistanceSensor.h>
 
 SensorArray ::SensorArray() {
-  for (int i = 0; i < 3; i ++) {
+  for (int i = 0; i < 3; i++) {
     spotStatus[i] = 0;
   }
 }
@@ -20,4 +20,12 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
 
 int SensorArray ::getStatus(int statusIndex) {
   return spotStatus[statusIndex];
+}
+
+void SensorArray ::SensorSetup(int trigPins[], int echoPins[]) {
+  //RGB LED Pin Mode
+  for (int i = 0; i < 4; i++) {
+    pinMode(trigPins[i], OUTPUT);
+    pinMode(echoPins[i], INPUT);
+  }
 }

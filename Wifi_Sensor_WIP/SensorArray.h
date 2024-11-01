@@ -80,6 +80,11 @@ public:
    *  anyone else in terms of other classes to be able to change its data.
    */
   int getStatus(int statusindex);
+
+  /**
+  *Sets the pin modes for each of the sensors
+  */
+  void SensorSetup(int trigPins[], int echoPins[]);
 };
 
 #endif
