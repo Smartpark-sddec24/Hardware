@@ -155,6 +155,7 @@ void postRequest(int status, int id) {
   delay(5000);
 }
 
+// The server does not accommodate a PUT request for hardware, so this request is unnecessary
 void putRequest(int status, int id) {
   String putData;
   String contentType = "text/plain";

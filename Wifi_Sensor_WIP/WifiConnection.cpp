@@ -20,7 +20,6 @@ WifiConnection ::WifiConnection(const char* ssid) {
 }
 
 void WifiConnection ::begin() {
-  // Serial.print(_ssid);
   while (status != WL_CONNECTED) {  // While the connection is not successful
     Serial.print("Attempting to connect to network: ");
     Serial.println(_ssid);
@@ -28,7 +27,6 @@ void WifiConnection ::begin() {
     // Connect to WPA/WPA2 network:
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
-    
     // wait 10 seconds for connection:
     delay(10000);
   }
@@ -60,14 +58,8 @@ void WifiConnection ::wifiInfo() {
 
       // Get the connection status
       status = WiFi.status();
-      Serial.print("Status: ");
       checkConnectionStatus();
     }
-  //}
-  // interval++;
-  // if (status != WL_CONNECTED) {
-  //   interval = 0;
-  // }
 }
 
 void WifiConnection ::checkConnectionStatus() {
@@ -114,8 +106,13 @@ void WifiConnection ::disconnect() {
 }
 
 void WifiConnection ::reconnect() {
+  int attempts = 0;
   while (status != WL_CONNECTED) {
+    if (attempts > 2) {
+      NVIC_SystemReset();
+    }
     status = WiFi.begin(_ssid);
+    attempts ++;
     delay(5000); // This delay can be changed based on our real-time data needs
   }
 }
