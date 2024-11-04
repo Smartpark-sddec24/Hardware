@@ -9,6 +9,7 @@
 #include "Arduino.h"
 #include "WifiConnection.h"
 #include "arduino_secrets.h"
+#include <ArduinoHttpClient.h>
 
 WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
@@ -115,4 +116,59 @@ void WifiConnection ::reconnect() {
     attempts ++;
     delay(5000); // This delay can be changed based on our real-time data needs
   }
+}
+
+// HTTP STUFF-----------------------------------------------
+//HTTP Requests
+WiFiClient wifi;
+char host[] = "f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io";
+// char uuid[] = /*"get"/*UUID*/;
+HttpClient https(wifi, host);
+
+const int kNetworkDelay = 1000;
+const int kNetworkTimeout = 30 * 1000;
+
+
+int WifiConnection ::serverGetStatus() {
+  // GET REQUEST--------------------------------------
+  Serial.println("making GET request");
+  int err = 0, intResponse;
+  err = https.get("/getStatus");
+  int statusCode = https.responseStatusCode();
+  String response = https.responseBody();
+
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
+  Serial.print("Response: ");
+  Serial.println(response);
+  intResponse = response.toInt();
+  return intResponse;
+}
+
+int WifiConnection ::serverGetSpots(){
+  int err = 0, intResponse;
+  err = https.get("/getSpots");
+  int statusCode = https.responseStatusCode();
+  String response = https.responseBody();
+   intResponse = response.toInt();
+  return intResponse;
+}
+
+void WifiConnection ::serverUpdateSpot(int status, int id) {
+  String postData;
+  String contentType = "text/plain";
+  postData = "status=%d&id=%d", status, id;
+  Serial.println("making POST request");
+  https.post("/setState?", contentType, postData);
+
+  // read the status code and body of the response
+  int statusCode = https.responseStatusCode();
+  String response = https.responseBody();
+
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
+  Serial.print("Response: ");
+  Serial.println(response);
+
+  delay(5000);
 }

@@ -2,6 +2,11 @@
 #include "SensorArray.h"
 #include <DistanceSensor.h>
 
+//LED Pin Assignments
+int redPin[] = { 16, 19 };
+int greenPin[] = { 17, 20 };
+int bluePin[] = { 18, 21 };
+
 SensorArray ::SensorArray() {
   for (int i = 0; i < 3; i++) {
     spotStatus[i] = 0;
@@ -10,7 +15,10 @@ SensorArray ::SensorArray() {
 
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   int dist = sensor.getCM();
-
+  char printSentence[50];
+  sprintf(printSentence, "Sensor %d dist: ", statusIndex+1); 
+  Serial.print(printSentence);
+  Serial.println(dist);//gets the distance in cm
   if (dist <= 30.0) {
     spotStatus[statusIndex] = 1;  // Spot is occupied
   } else {
@@ -28,4 +36,35 @@ void SensorArray ::SensorSetup(int trigPins[], int echoPins[]) {
     pinMode(trigPins[i], OUTPUT);
     pinMode(echoPins[i], INPUT);
   }
+}
+
+// LED ---------------------------
+void SensorArray ::LEDsetup() {
+  //RGB LED Pin Mode
+  for (int i = 0; i < 2; i++) {
+    pinMode(redPin[i], OUTPUT);
+    pinMode(greenPin[i], OUTPUT);
+    pinMode(bluePin[i], OUTPUT);
+  }
+}
+void SensorArray ::setLED(int index, int status) {
+  // int status = getRequest();
+  Serial.print("setLED status:");
+  Serial.println(status);
+  if (status == 0) {
+    Serial.println("green");
+    setColor(0, 255, 0, index);  //Green
+  } else if (status == 1) {
+    Serial.println("red");
+    setColor(255, 0, 0, index);  //Red
+  } else {
+    Serial.println("white");
+    setColor(255, 0, 255, index);  //White
+  }
+}
+void SensorArray ::setColor(int redValue, int greenValue, int blueValue, int index) {
+  //Writing to LED
+  digitalWrite(redPin[index], redValue);
+  digitalWrite(greenPin[index], greenValue);
+  digitalWrite(bluePin[index], blueValue);
 }

@@ -85,6 +85,13 @@ public:
   *Sets the pin modes for each of the sensors
   */
   void SensorSetup(int trigPins[], int echoPins[]);
+
+  /* 
+  *LED FUNCTIONS
+  */
+  void LEDsetup ();
+  void setLED(int index, int status);
+  void setColor(int redValue, int greenValue, int blueValue, int index);
 };
 
 #endif

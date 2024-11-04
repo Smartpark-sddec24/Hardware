@@ -86,6 +86,23 @@ public:
    * A value storing the status of the connection
    */
   int status;
+
+  /*
+  *
+  */
+  int serverGetStatus();
+
+  /*
+  *
+  */
+  int serverGetSpots();
+
+  /*
+  *
+  */
+  void serverUpdateSpot(int status, int id);
+ 
+
 private:
   /*
    * This function reconnects the board to the network
