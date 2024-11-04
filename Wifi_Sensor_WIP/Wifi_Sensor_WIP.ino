@@ -58,74 +58,42 @@ const int kNetworkTimeout = 30 * 1000;
 void setup() {
   Serial.begin(9600);
   delay(5000);
-  Serial.println("WiFi connection begin");
-
-  // // Sensor 1 Pin Mode
-  // pinMode(S1_Trig, OUTPUT);
-  // pinMode(S1_Echo, INPUT);
-
-  // //Sensor 2 Pin Mode
-  // pinMode(S2_Trig, OUTPUT);
-  // pinMode(S2_Echo, INPUT);
-
-  // //Sensor 3 Pin Mode
-  // pinMode(S3_Trig, OUTPUT);
-  // pinMode(S3_Echo, INPUT);
-
-  // //Sensor 4 Pin Mode
-  // pinMode(S4_Trig, OUTPUT);
-  // pinMode(S4_Echo, INPUT);
-   // Initialize sensors in setup() using a loop
-  for (int i = 0; i < 4; i++) {
-    sensorArr[i] = DistanceSensor(S_Trig[i], S_Echo[i]);
-  }
-
   // Sensor Pin mode
   sensorArrayLIB.SensorSetup(S_Trig, S_Echo);
   //RGB LED Pin Mode
   LEDsetup();
-
-  // wifiConnection.begin();
+  // Wifi connection
+  Serial.println("WiFi connection begin");
+  wifiConnection.begin();
 }
 
 
 void loop() {
   // wifiConnection.wifiInfo();
-  //takeMeasurements();
 
-  //sensorArrayLIB.setStatus(sensor1, 0);
-  // // Serial.print("Sensor 1 dist: ");
-  // // Serial.println(/*sensor1.getCM()*/distance[0]);
-  // Serial.print("Status: ");
-  // Serial.println(sensorArrayLIB.getStatus(0));
+for (int i=0;i<2;i++){
+  sensorArrayLIB.setStatus(sensorArr[i], i);
+  String printSentence;
+  printSentence= "Sensor %d dist: ",i;
+  Serial.print(printSentence);
+  Serial.println(sensorArr[i].getCM());//gets the distance in cm
+  Serial.print("Status: ");
+  
+  Serial.println(sensorArrayLIB.getStatus(i));// gets the status of a spot (open, occupied, reserved)
+  setLED(i, sensorArrayLIB.getStatus(i)); //sets the LED to the correct color. Eventually will use get request instead of get status
 
-  Serial.print("Sensor 1: ");
-  Serial.println(sensorArr[0].getCM());
-  // getRequest();
-  // for (int i = 0; i < 4; i++) {
-
-    // sensorArrayLIB.setStatus(arrTest[i], i);
-    // postRequest(sensorArrayLIB.getStatus(i), i);
-  // }
+}
 
   
+  // getRequest(); //get request returns a number value to use in setLED()
 
-  // int status = getRequest();
+  // postRequest(sensorArrayLIB.getStatus(i), i); // post request posts the sensor data to a spot
 
-  // for (int i = 0; i < 2; i++) {
-  //   setLED(i, status);
-  //   status = 1;
-  // }
 
   // And just stop, now that we've tried a download
-  // while (1)
-  //   ;
-  // wifiConnection.wifiInfo();
-  // takeMeasurements();
-
-
-  // Serial.print("Sensor 1: ");
-  // Serial.println(distance[0]);
+  while (1)
+    ;
+  
 }
 
 
