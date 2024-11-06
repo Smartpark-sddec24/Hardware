@@ -6,13 +6,13 @@
 #include <string.h>
 
 //Distance Sensors
-int S_Trig[] = { 5, 7, 9, 11 }; 
+int S_Trig[] = { 5, 7, 9, 11 };
 int S_Echo[] = { 6, 8, 10, 12 };
 DistanceSensor sensorArr[] = {
-    DistanceSensor(S_Trig[0], S_Echo[0]),
-    DistanceSensor(S_Trig[1], S_Echo[1]),
-    DistanceSensor(S_Trig[2], S_Echo[2]),
-    DistanceSensor(S_Trig[3], S_Echo[3])
+  DistanceSensor(S_Trig[0], S_Echo[0]),
+  DistanceSensor(S_Trig[1], S_Echo[1]),
+  DistanceSensor(S_Trig[2], S_Echo[2]),
+  DistanceSensor(S_Trig[3], S_Echo[3])
 };
 
 SensorArray sensorArray_LED = SensorArray();
@@ -30,25 +30,25 @@ void setup() {
   sensorArray_LED.LEDsetup();
   // Wifi connection
   Serial.println("WiFi connection begin");
-  wifiConnection_HTTP.begin();
+  // wifiConnection_HTTP.begin();
 }
 
 
 void loop() {
   // wifiConnection.wifiInfo();
 
-for (int i=0;i<2;i++){
-  sensorArray_LED.setStatus(sensorArr[i], i);
-  delay(5000);
-  
-  Serial.print("Status: ");
-  
-  Serial.println(sensorArray_LED.getStatus(i));// gets the status of a spot (open, occupied)
-  sensorArrayLIB.setLED(i, sensorArray_LED.getStatus(i)); //sets the LED to the correct color. Eventually will use serverGetStatus instead of getStatus
-  delay(5000);
-}
+  for (int i = 0; i < 4; i++) {
+    sensorArray_LED.setStatus(sensorArr[i], i);
+    delay(5000);
 
-  
+    Serial.print("Status: ");
+
+    Serial.println(sensorArray_LED.getStatus(i));            // gets the status of a spot (open, occupied)
+    sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. Eventually will use serverGetStatus instead of getStatus
+    delay(5000);
+  }
+
+
   // wifiConnection_HTTP.serverGetStatus(); //serverGetStatus returns a number value to use in setLED()
 
   // wifiConnection_HTTP.serverUpdateSpot(sensorArrayLIB.getStatus(i), i); // post request posts the sensor data to a spot
@@ -57,9 +57,4 @@ for (int i=0;i<2;i++){
   // And just stop, now that we've tried a download
   while (1)
     ;
-  
 }
-
-
-
-
