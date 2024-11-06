@@ -86,11 +86,26 @@ public:
   */
   void SensorSetup(int trigPins[], int echoPins[]);
 
-  /* 
-  *LED FUNCTIONS
-  */
+  /****************************************
+  LED FUNCTIONS
+  *****************************************/
+
+  /*
+   * Defines each LED pin array as an output pin
+   */
   void LEDsetup ();
+
+  /*
+   * Takes in the current status of a sensor at some index and sets the corresponding led to either
+   *    of the following colors:
+   *        Green = Open
+   *        Red   = Occupied
+   */
   void setLED(int index, int status);
+
+  /*
+   * Sets the analog value of each 
+   */
   void setColor(int redValue, int greenValue, int blueValue, int index);
 };
 
