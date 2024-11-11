@@ -18,6 +18,13 @@ SensorArray ::SensorArray() {
   }
 }
 
+double SensorArray ::averageMeasurement(DistanceSensor sensor) {
+  double average;
+
+  unsigned long startTime = millis();
+  
+}
+
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   int dist = sensor.getCM();
   char printSentence[50];
