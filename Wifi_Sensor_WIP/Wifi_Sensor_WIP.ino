@@ -4,6 +4,7 @@
 #include <DistanceSensor.h>  //Library by Segilmez06
 #include <ArduinoHttpClient.h>
 #include <string.h>
+#include <TimerOne.h>
 
 //Distance Sensors
 int S_Trig[] = { 5, 7, 9, 11 };
@@ -21,8 +22,8 @@ SensorArray sensorArray_LED = SensorArray();
 char ssid[] = SECRET_SSID;
 WifiConnection wifiConnection_HTTP(ssid);
 
-static boolean toggle = true;
-static boolean tmp = toggle;
+// static boolean toggle = true;
+// static boolean tmp = toggle;
 
 void setup() {
   Serial.begin(9600);
