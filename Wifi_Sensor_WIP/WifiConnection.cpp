@@ -114,7 +114,7 @@ void WifiConnection ::reconnect() {
     }
     status = WiFi.begin(_ssid);
     attempts ++;
-    delay(5000); // This delay can be changed based on our real-time data needs
+    // delay(5000); // This delay can be changed based on our real-time data needs
   }
 }
 
@@ -170,5 +170,5 @@ void WifiConnection ::serverUpdateSpot(int status, int id) {
   Serial.print("Response: ");
   Serial.println(response);
 
-  delay(5000);
+  // delay(5000);
 }
