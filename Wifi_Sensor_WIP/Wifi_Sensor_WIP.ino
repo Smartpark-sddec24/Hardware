@@ -4,205 +4,103 @@
 #include <DistanceSensor.h>  //Library by Segilmez06
 #include <ArduinoHttpClient.h>
 #include <string.h>
+
 //Distance Sensors
-//Sensor 4
-const int S4_Trig = 5;
-const int S4_Echo = 6;
-DistanceSensor sensor4 = DistanceSensor(S4_Trig, S4_Echo);
+int S_Trig[] = { 5, 7, 9, 11 };
+int S_Echo[] = { 6, 8, 10, 12 };
+DistanceSensor sensorArr[] = {
+  DistanceSensor(S_Trig[0], S_Echo[0]),
+  DistanceSensor(S_Trig[1], S_Echo[1]),
+  DistanceSensor(S_Trig[2], S_Echo[2]),
+  DistanceSensor(S_Trig[3], S_Echo[3])
+};
 
-//Sensor 3
-const int S3_Trig = 7;
-const int S3_Echo = 8;
-DistanceSensor sensor3 = DistanceSensor(S3_Trig, S3_Echo);
+SensorArray sensorArray_LED = SensorArray();
 
-//Sensor 2
-const int S2_Trig = 9;
-const int S2_Echo = 10;
-DistanceSensor sensor2 = DistanceSensor(S2_Trig, S2_Echo);
-
-//Sensor 1
-const int S1_Trig = 11;
-const int S1_Echo = 12;
-DistanceSensor sensor1 = DistanceSensor(S1_Trig, S1_Echo);
-
-SensorArray sensorArray = SensorArray();
-
-DistanceSensor arrTest[] = { sensor1, sensor2, sensor3, sensor4 };
-int distance[4];
-
-//LED Pin Assignments
-int redPin[] = { 16, 19 };
-int greenPin[] = { 17, 20 };
-int bluePin[] = { 18, 21 };
-
-
-// //WiFi vars
+//WiFi vars
 char ssid[] = SECRET_SSID;
-WifiConnection wifiConnection(ssid);
+WifiConnection wifiConnection_HTTP(ssid);
 
-//HTTP Requests
-WiFiClient wifi;
-char host[] = "f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io";
-// char uuid[] = /*"get"/*UUID*/;
-HttpClient https(wifi, host);
+// static boolean toggle = true;
+// static boolean tmp = toggle;
 
-const int kNetworkDelay = 1000;
-const int kNetworkTimeout = 30 * 1000;
+volatile bool timerFlag = false;
 
 void setup() {
   Serial.begin(9600);
   delay(5000);
+  // // Sensor Pin mode
+  // sensorArray_LED.SensorSetup(S_Trig, S_Echo);
+  // //RGB LED Pin Mode
+  // sensorArray_LED.LEDsetup();
+  // // Wifi connection
+  pinMode(LED_BUILTIN, OUTPUT);
+
   Serial.println("WiFi connection begin");
-
-  // Sensor 1 Pin Mode
-  pinMode(S1_Trig, OUTPUT);
-  pinMode(S1_Echo, INPUT);
-
-  //Sensor 2 Pin Mode
-  pinMode(S2_Trig, OUTPUT);
-  pinMode(S2_Echo, INPUT);
-
-  //Sensor 3 Pin Mode
-  pinMode(S3_Trig, OUTPUT);
-  pinMode(S3_Echo, INPUT);
-
-  //Sensor 4 Pin Mode
-  pinMode(S4_Trig, OUTPUT);
-  pinMode(S4_Echo, INPUT);
-
-  //RGB LED Pin Mode
-  LEDsetup();
-  
-  wifiConnection.begin();
+  wifiConnection_HTTP.begin();
+  //Interrupt Setup
+  interruptSetup();
 }
-
 
 void loop() {
   // wifiConnection.wifiInfo();
-  //takeMeasurements();
 
-  //sensorArray.setStatus(sensor1, 0);
-  // // Serial.print("Sensor 1 dist: ");
-  // // Serial.println(/*sensor1.getCM()*/distance[0]);
-  // Serial.print("Status: ");
-  // Serial.println(sensorArray.getStatus(0));
+  if (timerFlag) {
+    // Serial.println("Timer overflow");
+    timerFlag = false;
 
-  // Serial.print("Sensor 1: ");
-  // Serial.println(distance[0]);
-  Serial.println(arrTest[0].getCM());
-  getRequest();
-  for (int i = 0; i < 4; i++) {
-    
-    sensorArray.setStatus(arrTest[i], i);
-    postRequest(sensorArray.getStatus(i), i);
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
   }
 
-  Serial.print("Sensor 1: ");
-  Serial.println(distance[0]);
+  // for (int i = 0; i < 4; i++) {
 
-  int status = getRequest();
-  
-  for (int i = 0; i < 2; i++) {
-    setLED(i,status);
-    status= 1;
+    // sensorArray_LED.setStatus(sensorArr[i], i);
+    // delay(5000);
+
+    // Serial.print("Status: ");
+
+    // Serial.println(sensorArray_LED.getStatus(i));             // gets the status of a spot (open, occupied)
+    // sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. Eventually will use serverGetStatus instead of getStatus
+    // delay(5000);
+
+    // wifiConnection_HTTP.serverGetStatus(); //serverGetStatus returns a number value to use in setLED()
+
+    // wifiConnection_HTTP.serverUpdateSpot(sensorArrayLIB.getStatus(i), i); // post request posts the sensor data to a spot
+
+    // Set timer TC3 to call the TC3_Handler at 1Hz
+  // }
+}
+
+/************************** Interrupt Setup and Handling **********************************/
+void interruptSetup() {
+  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_CLKEN |  // Set GCLK0 (48MHz) as clock source for timer TC3
+                      GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID_TCC2_TC3;
+
+  TC3->COUNT16.CTRLA.reg = TC_CTRLA_PRESCSYNC_PRESC |    // Wrap around on next prescaler clock
+                           TC_CTRLA_PRESCALER_DIV1024 |  // Set prescaler to 1024, 48MHz/1024 = 46.875kHz
+                           TC_CTRLA_WAVEGEN_MFRQ;        // Put the timer TC3 into match frequency (MFRQ) mode
+
+  TC3->COUNT16.CC[0].reg = 9374;  // 5Hz: 48MHz /(1024 * 5Hz) - 1 = 9374
+  while (TC3->COUNT16.STATUS.bit.SYNCBUSY && wifiConnection_HTTP.status != WL_CONNECTED)
+    ;  // Wait for synchronization
+
+  NVIC_SetPriority(TC3_IRQn, 0);  // Set the Nested Vector Interrupt Controller (NVIC) priority for TC3 to 0 (highest)
+  NVIC_EnableIRQ(TC3_IRQn);       // Connect TC3 to Nested Vector Interrupt Controller (NVIC)
+
+  TC3->COUNT16.INTENSET.reg = TC_INTENSET_OVF;  // Enable TC3 overflow interrupts
+
+  TC3->COUNT16.CTRLA.bit.ENABLE = 1;  // Enable TC3
+
+  while (TC3->COUNT16.STATUS.bit.SYNCBUSY)
+    ;  // Wait for synchronization
+}
+
+void TC3_Handler()  // Interrupt Service Routine (ISR) for timer TC3
+{
+  if (TC3->COUNT16.INTFLAG.bit.OVF)  // Check for overflow (OVF) interrupt
+  {
+    TC3->COUNT16.INTFLAG.bit.OVF = 1;  // Clear the OVF interrupt flag
+    // Put your timer overflow (OVF) code here...
+    timerFlag = true;
   }
-
-  // And just stop, now that we've tried a download
-  while (1)
-    ;
-  // wifiConnection.wifiInfo();
-  // takeMeasurements();
-
-
-  // Serial.print("Sensor 1: ");
-  // Serial.println(distance[0]);
-}
-
-
-
-int getRequest() {
-  // GET REQUEST--------------------------------------
-  Serial.println("making GET request");
-  int err = 0, intResponse;
-  err = https.get("/getStatus");
-  int statusCode = https.responseStatusCode();
-  String response = https.responseBody();
-
-  Serial.print("Status code: ");
-  Serial.println(statusCode);
-  Serial.print("Response: ");
-  Serial.println(response);
-  intResponse = response.toInt();
-  return intResponse;
-}
-
-void postRequest(int status, int id) {
-  String postData;
-  String contentType = "text/plain";
-  postData = "status=%d&id=%d", status, id;
-  Serial.println("making POST request");
-  https.post("/setState?", contentType, postData);
-
-  // read the status code and body of the response
-  int statusCode = https.responseStatusCode();
-  String response = https.responseBody();
-
-  Serial.print("Status code: ");
-  Serial.println(statusCode);
-  Serial.print("Response: ");
-  Serial.println(response);
-
-  delay(5000);
-}
-
-// The server does not accommodate a PUT request for hardware, so this request is unnecessary
-void putRequest(int status, int id) {
-  String putData;
-  String contentType = "text/plain";
-  putData = "status=%d&id=%d", status, id;
-  Serial.println("making PUT request");
-  https.put("/setState?", contentType, putData);
-
-  // read the status code and body of the response
-  int statusCode = https.responseStatusCode();
-  String response = https.responseBody();
-
-  Serial.print("Status code: ");
-  Serial.println(statusCode);
-  Serial.print("Response: ");
-  Serial.println(response);
-
-  delay(5000);
-  distance[3] = sensor4.getCM();
-  delay(100);
-}
-// LED ---------------------------
-void LEDsetup() {
-  //RGB LED Pin Mode
-  for (int i = 0; i < 2; i++) {
-    pinMode(redPin[i], OUTPUT);
-    pinMode(greenPin[i], OUTPUT);
-    pinMode(bluePin[i], OUTPUT);
-  }
-}
-void setLED(int index, int status) {
-  // int status = getRequest();
-  Serial.print("setLED status:");
-  Serial.println(status);
-  if (status == 0) {
-    Serial.println("green");
-    setColor(0, 255, 0, index);  //Green
-  } else if (status == 1) {
-    Serial.println("red");
-    setColor(255, 0, 0, index);  //Red
-  } else {
-    Serial.println("white");
-    setColor(255, 0, 255, index);  //White
-  }
-}
-void setColor(int redValue, int greenValue, int blueValue, int index) {
-  //Writing to LED
-  digitalWrite(redPin[index], redValue);
-  digitalWrite(greenPin[index], greenValue);
-  digitalWrite(bluePin[index], blueValue);
 }

@@ -86,6 +86,30 @@ public:
    * A value storing the status of the connection
    */
   int status;
+
+  /*
+  *
+  */
+  int serverGetStatus();
+
+  /*
+  *
+  */
+  int serverGetSpots();
+
+  /*
+  * Posts an updated status for a spot with id 'id' to the server.
+  * The response of this request will carry an 'is_reserved' status and this will
+  *   be used to overwrite our LED color to indicate a reservation for that spot.
+  *
+  * TODO: Parse response for the is_reserved state
+  * 
+  * TODO: it could be that this should be switched to a boolean return to assist in 
+  *   indicating a reservation.
+  */
+  void serverUpdateSpot(int status, int id);
+ 
+
 private:
   /*
    * This function reconnects the board to the network

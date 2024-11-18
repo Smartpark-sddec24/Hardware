@@ -56,6 +56,12 @@ public:
   int spotStatus[4];
 
   /**
+   * This method takes in a distance sensor to take 5 measurements and return their average to increase the
+   *    system's accuracy.
+   */
+   double averageMeasurement(DistanceSensor sensor);
+
+  /**
    * This method currently takes in a single sensor and its corresponding status index in spotStatus, makes a
    *  measurement with the sensor and translates it into an updated status stored at statusIndex.
    * 
@@ -80,6 +86,33 @@ public:
    *  anyone else in terms of other classes to be able to change its data.
    */
   int getStatus(int statusindex);
+
+  /**
+  *Sets the pin modes for each of the sensors
+  */
+  void SensorSetup(int trigPins[], int echoPins[]);
+
+  /****************************************
+  LED FUNCTIONS
+  *****************************************/
+
+  /*
+   * Defines each LED pin array as an output pin
+   */
+  void LEDsetup ();
+
+  /*
+   * Takes in the current status of a sensor at some index and sets the corresponding led to either
+   *    of the following colors:
+   *        Green = Open
+   *        Red   = Occupied
+   */
+  void setLED(int index, int status);
+
+  /*
+   * Sets the analog value of each 
+   */
+  void setColor(int redValue, int greenValue, int blueValue, int index);
 };
 
 #endif
