@@ -105,6 +105,6 @@ void WifiConnection ::reconnect() {
     }
     status = WiFi.begin(_ssid);
     attempts++;
-    delay(5000);  // This delay can be changed based on our real-time data needs
+    delay(10000);  // This delay can be changed based on our real-time data needs
   }
 }
