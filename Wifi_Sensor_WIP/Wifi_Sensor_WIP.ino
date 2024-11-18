@@ -46,7 +46,7 @@ void loop() {
   // wifiConnection.wifiInfo();
 
   if (timerFlag) {
-    Serial.println("Timer overflow");
+    // Serial.println("Timer overflow");
     timerFlag = false;
 
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
