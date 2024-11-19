@@ -11,6 +11,7 @@
 #include "arduino_secrets.h"
 #include <ArduinoHttpClient.h>
 
+
 WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
   status = WL_IDLE_STATUS;
@@ -130,6 +131,9 @@ const int kNetworkTimeout = 30 * 1000;
 
 
 int WifiConnection ::serverGetStatus() {
+  if(flag == false){
+    flag = true;
+  }
   // GET REQUEST--------------------------------------
   Serial.println("making GET request");
   int err = 0, intResponse;
@@ -142,19 +146,27 @@ int WifiConnection ::serverGetStatus() {
   Serial.print("Response: ");
   Serial.println(response);
   intResponse = response.toInt();
+  flag = false;
   return intResponse;
 }
 
 int WifiConnection ::serverGetSpots(){
+  if(flag == false){
+    flag = true;
+  }
   int err = 0, intResponse;
   err = https.get("/getSpots");
   int statusCode = https.responseStatusCode();
   String response = https.responseBody();
    intResponse = response.toInt();
+  flag = false; 
   return intResponse;
 }
 
 void WifiConnection ::serverUpdateSpot(int status, int id) {
+  if(flag == false){
+    flag = true;
+  }
   String postData;
   String contentType = "text/plain";
   postData = "status=%d&id=%d", status, id;
@@ -171,4 +183,5 @@ void WifiConnection ::serverUpdateSpot(int status, int id) {
   Serial.println(response);
 
   // delay(5000);
+  flag = false;
 }

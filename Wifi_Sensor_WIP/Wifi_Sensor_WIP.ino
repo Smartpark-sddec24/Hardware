@@ -45,6 +45,10 @@ void setup() {
 void loop() {
   // wifiConnection.wifiInfo();
 
+    if(wifiConnection_HTTP.flag == true){
+     TC3->COUNT16.CTRLA.bit.ENABLE = 0;
+  }
+
   if (timerFlag) {
     // Serial.println("Timer overflow");
     timerFlag = false;
@@ -52,23 +56,23 @@ void loop() {
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
   }
 
-  // for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++) {
 
-    // sensorArray_LED.setStatus(sensorArr[i], i);
-    // delay(5000);
+    sensorArray_LED.setStatus(sensorArr[i], i);
+    delay(5000);
 
-    // Serial.print("Status: ");
+    Serial.print("Status: ");
 
-    // Serial.println(sensorArray_LED.getStatus(i));             // gets the status of a spot (open, occupied)
-    // sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. Eventually will use serverGetStatus instead of getStatus
-    // delay(5000);
+    Serial.println(sensorArray_LED.getStatus(i));             // gets the status of a spot (open, occupied)
+    sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. Eventually will use serverGetStatus instead of getStatus
+    delay(5000);
 
-    // wifiConnection_HTTP.serverGetStatus(); //serverGetStatus returns a number value to use in setLED()
+    wifiConnection_HTTP.serverGetStatus(); //serverGetStatus returns a number value to use in setLED()
 
     // wifiConnection_HTTP.serverUpdateSpot(sensorArrayLIB.getStatus(i), i); // post request posts the sensor data to a spot
 
-    // Set timer TC3 to call the TC3_Handler at 1Hz
-  // }
+    //Set timer TC3 to call the TC3_Handler at 1Hz
+  }
 }
 
 /************************** Interrupt Setup and Handling **********************************/
@@ -91,10 +95,12 @@ void interruptSetup() {
 
   TC3->COUNT16.CTRLA.bit.ENABLE = 1;  // Enable TC3
 
+
+
   while (TC3->COUNT16.STATUS.bit.SYNCBUSY)
     ;  // Wait for synchronization
 }
-
+ 
 void TC3_Handler()  // Interrupt Service Routine (ISR) for timer TC3
 {
   if (TC3->COUNT16.INTFLAG.bit.OVF)  // Check for overflow (OVF) interrupt
