@@ -14,7 +14,7 @@ int bluePin[] = { 16, 19, 13, 2 };   //[A2,A5,D13,D2]
 
 SensorArray ::SensorArray() {
   for (int i = 0; i < 3; i++) {
-    spotStatus[i] = 0;
+    spotStatus[i] = false;
   }
 }
 
@@ -38,7 +38,7 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   }
 }
 
-int SensorArray ::getStatus(int statusIndex) {
+bool SensorArray ::getStatus(int statusIndex) {
   return spotStatus[statusIndex];
 }
 
@@ -70,8 +70,8 @@ void SensorArray ::setLED(int index, int status) {
     Serial.println("red");
     setColor(255, 0, 0, index);  //Red
   } else {
-    Serial.println("white");
-    setColor(255, 150, 255, index);  //White
+    Serial.println("yellow");
+    setColor(255, 255, 0, index);  //yellow
   }
 }
 void SensorArray ::setColor(int redValue, int greenValue, int blueValue, int index) {

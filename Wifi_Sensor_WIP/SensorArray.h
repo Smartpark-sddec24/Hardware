@@ -53,7 +53,7 @@ public:
    *  of the post and/or preprocessing necessary for making a POST request, currently having to translate it into a bool
    *  from an int.
    */
-  int spotStatus[4];
+  bool spotStatus[4];
 
   /**
    * This method takes in a distance sensor to take 5 measurements and return their average to increase the
@@ -85,7 +85,7 @@ public:
    *  make references directly to the array. However, it's possible that we should make the array private since we don't
    *  anyone else in terms of other classes to be able to change its data.
    */
-  int getStatus(int statusindex);
+  bool getStatus(int statusindex);
 
   /**
   *Sets the pin modes for each of the sensors

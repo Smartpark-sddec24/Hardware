@@ -107,7 +107,7 @@ public:
   * TODO: it could be that this should be switched to a boolean return to assist in 
   *   indicating a reservation.
   */
-  void serverUpdateSpot(int status, int id);
+  int serverUpdateSpot(bool is_occupied, int spot_id);
  
 
 private:
