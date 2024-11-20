@@ -121,59 +121,38 @@ void WifiConnection ::reconnect() {
 // HTTP STUFF-----------------------------------------------
 //HTTP Requests
 WiFiClient wifi;
-char host[] = "10.48.9.236:5000";
+char host[] = "10.48.8.188";
+// char host[] ="f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io"; //Hardware url
 // char uuid[] = /*"get"/*UUID*/;
-HttpClient https(wifi, host);
+HttpClient http(wifi, host, 5000);
 
-const int kNetworkDelay = 1000;
-const int kNetworkTimeout = 30 * 1000;
+// const int kNetworkDelay = 1000;
+// const int kNetworkTimeout = 30 * 1000;
 
-
-// int WifiConnection ::serverGetStatus() {
-//   // GET REQUEST--------------------------------------
-//   Serial.println("making GET request");
-//   int err = 0, intResponse;
-//   err = https.get("/getStatus");
-//   int statusCode = https.responseStatusCode();
-//   String response = https.responseBody();
-
-//   Serial.print("Status code: ");
-//   Serial.println(statusCode);
-//   Serial.print("Response: ");
-//   Serial.println(response);
-//   intResponse = response.toInt();
-//   return intResponse;
-// }
-
-// int WifiConnection ::serverGetSpots(){
-//   int err = 0, intResponse;
-//   err = https.get("/getSpots");
-//   int statusCode = https.responseStatusCode();
-//   String response = https.responseBody();
-//    intResponse = response.toInt();
-//   return intResponse;
-// }
 
 int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
-  int isReservedInt;
-  String postData;
+  int isReservedInt = 4;
+  String isReserved;
   String contentType = "text/plain";
-  postData = "spot_id=%d&is_occupied=%b", spot_id, is_occupied;
+
+  char postData[100];
+  sprintf(postData, "/updateSpot?spot_id=%d&is_occupied=%d", spot_id, is_occupied);
+  Serial.print("POST DATA: ");
+  Serial.println(postData);
+
   Serial.println("making POST request");
-  https.post("/updateSpot?", contentType, postData);
+  http.post(postData);
 
   // read the status code and body of the response
-  int statusCode = https.responseStatusCode();
+  int statusCode = http.responseStatusCode();
   Serial.print("responseBody: ");
-  Serial.println(https.responseBody());
-  String isReserved = https.responseBody();
+
+  isReserved = http.responseBody();
   Serial.print("Status code: ");
   Serial.println(statusCode);
 
   Serial.print("isReserved: ");
   Serial.println(isReserved);
   isReservedInt = isReserved.toInt();
-
   return isReservedInt;
-  // delay(5000);
 }

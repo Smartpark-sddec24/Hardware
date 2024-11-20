@@ -51,7 +51,7 @@ void loop() {
 
   //   digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
   // }
-  bool is_reserved = false;
+  bool is_reserved = NULL;
 
   // Serial.println(sensorArray_LED.getStatus(i));  // gets the status of a spot (open=false, occupied=true)
 
