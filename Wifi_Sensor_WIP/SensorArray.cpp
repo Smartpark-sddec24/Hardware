@@ -12,6 +12,7 @@ int redPin[] = { 14, 17, 20, 4 };    //[A0,A3,A6,D4]
 int greenPin[] = { 15, 18, 21, 3 };  //[A1,A4,A7,D3]
 int bluePin[] = { 16, 19, 13, 2 };   //[A2,A5,D13,D2]
 
+
 SensorArray ::SensorArray() {
   for (int i = 0; i < 3; i++) {
     spotStatus[i] = false;

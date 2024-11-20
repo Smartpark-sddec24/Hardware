@@ -12,6 +12,9 @@
 
 class WifiConnection {
 public:
+  
+  bool flag = false;
+ 
   /*
    * Constructs a WifiConnection which manages the WiFi connection
    *    of an Arduino Nano 33 IoT

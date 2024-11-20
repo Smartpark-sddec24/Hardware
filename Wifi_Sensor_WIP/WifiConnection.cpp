@@ -11,6 +11,7 @@
 #include "arduino_secrets.h"
 #include <ArduinoHttpClient.h>
 
+
 WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
   status = WL_IDLE_STATUS;
@@ -128,7 +129,6 @@ HttpClient https(wifi, host);
 const int kNetworkDelay = 1000;
 const int kNetworkTimeout = 30 * 1000;
 
-
 // int WifiConnection ::serverGetStatus() {
 //   // GET REQUEST--------------------------------------
 //   Serial.println("making GET request");
@@ -156,6 +156,43 @@ const int kNetworkTimeout = 30 * 1000;
 
 int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
   int isReservedInt;
+int WifiConnection ::serverGetStatus() {
+  if(flag == false){
+    flag = true;
+  }
+  // GET REQUEST--------------------------------------
+  Serial.println("making GET request");
+  int err = 0, intResponse;
+  err = https.get("/getStatus");
+  int statusCode = https.responseStatusCode();
+  String response = https.responseBody();
+
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
+  Serial.print("Response: ");
+  Serial.println(response);
+  intResponse = response.toInt();
+  flag = false;
+  return intResponse;
+}
+
+int WifiConnection ::serverGetSpots(){
+  if(flag == false){
+    flag = true;
+  }
+  int err = 0, intResponse;
+  err = https.get("/getSpots");
+  int statusCode = https.responseStatusCode();
+  String response = https.responseBody();
+   intResponse = response.toInt();
+  flag = false; 
+  return intResponse;
+}
+
+void WifiConnection ::serverUpdateSpot(int status, int id) {
+  if(flag == false){
+    flag = true;
+  }
   String postData;
   String contentType = "text/plain";
   postData = "spot_id=%d&is_occupied=%b", spot_id, is_occupied;
@@ -176,4 +213,5 @@ int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
 
   return isReservedInt;
   // delay(5000);
+  flag = false;
 }
