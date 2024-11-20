@@ -86,6 +86,13 @@ public:
    * A value storing the status of the connection
    */
   int status;
+
+  /**
+   * This is a flag for a system reset on an initial connection attempt when
+   *    the system reads a Disconnected status on start up. If this status is
+   *    returned for three connetion attempts, the system will do a hard reset
+   */
+  int connectionAttempts;
 private:
   /*
    * This function reconnects the board to the network

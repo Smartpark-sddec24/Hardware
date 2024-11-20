@@ -17,10 +17,16 @@ WifiConnection ::WifiConnection(const char* ssid) {
   //intervalInfo = 5000;
   interval = 0;
   connected = false;
+  connectionAttempts = 0;
 }
 
 void WifiConnection ::begin() {
   while (status != WL_CONNECTED) {  // While the connection is not successful
+    if (connectionAttempts > 2) {
+      Serial.println("Three failed attempts with Disconnected status on startup");
+      Serial.println("Performing a system reset...");
+      NVIC_SystemReset();
+    }
     Serial.print("Attempting to connect to network: ");
     Serial.println(_ssid);
 
@@ -28,7 +34,7 @@ void WifiConnection ::begin() {
     status = WiFi.begin(_ssid);
     Serial.println("Waiting to establish connection...");
     // wait 10 seconds for connection:
-    delay(10000);    
+    delay(10000);
     checkConnectionStatus();
   }
 
@@ -83,6 +89,10 @@ void WifiConnection ::checkConnectionStatus() {
       break;
     case 6:
       Serial.println("Disconnected");
+      connectionAttempts ++;
+      Serial.print("Connection attemps with a Disconnected status: ");
+      Serial.println(connectionAttempts);
+      Serial.println("---------------------------------------------------------");
       break;
     case 255:
       Serial.println("No WiFi shield detected");
