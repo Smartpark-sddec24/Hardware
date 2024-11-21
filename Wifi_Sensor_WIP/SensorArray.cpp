@@ -18,23 +18,20 @@ SensorArray ::SensorArray() {
   }
 }
 
-double SensorArray ::averageMeasurement(DistanceSensor sensor) {
-  double average;
-
-  unsigned long startTime = millis();
-  
-}
-
+// NOTE: Removed averageMeasurement function modified setStatus to include this averaging functionality
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
-  int dist = sensor.getCM();
-  char printSentence[50];
-  sprintf(printSentence, "Sensor %d dist: ", statusIndex + 1);
-  Serial.print(printSentence);
-  Serial.println(dist);  //gets the distance in cm
-  if (dist <= 30.0) {
-    spotStatus[statusIndex] = 1;  // Spot is occupied
+  int measurements = 3;
+  float avgDist = 0;
+
+  for (int i = 0; i < measurements; i++) {
+    avgDist += sensor.getCM();
+  }
+  avgDist /= measurements;
+
+  if (avgDist <= 30.0) {
+    spotStatus[statusIndex] = true;
   } else {
-    spotStatus[statusIndex] = 0;  // Spot is open
+    spotStatus[statusIndex] = false;
   }
 }
 
@@ -60,20 +57,18 @@ void SensorArray ::LEDsetup() {
   }
 }
 void SensorArray ::setLED(int index, int status) {
-  // int status = getRequest();
-  Serial.print("setLED status:");
-  Serial.println(status);
   if (status == 0) {
-    Serial.println("green");
+    // Serial.println("green");
     setColor(0, 255, 0, index);  //Green
   } else if (status == 1) {
-    Serial.println("red");
+    // Serial.println("red");
     setColor(255, 0, 0, index);  //Red
   } else {
-    Serial.println("yellow");
+    // Serial.println("yellow");
     setColor(255, 255, 0, index);  //yellow
   }
 }
+
 void SensorArray ::setColor(int redValue, int greenValue, int blueValue, int index) {
   //Writing to LED
   digitalWrite(redPin[index], redValue);
