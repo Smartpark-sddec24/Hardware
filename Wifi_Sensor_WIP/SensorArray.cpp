@@ -28,16 +28,18 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
     avgDist += sensor.getCM();
   }
   avgDist /= measurements;
-
+  
+  Serial.println(avgDist);
+  // Serial.println(avgDist);
   if (avgDist <= 30.0) {
-    spotStatus[statusIndex] = true;
+    spotStatus[statusIndex] = 1;
   } else {
-    spotStatus[statusIndex] = false;
+    spotStatus[statusIndex] = 0;
   }
 }
 
-bool SensorArray ::getStatus(int statusIndex) {
-  return spotStatus[statusIndex];
+bool* SensorArray ::getStatus(){
+  return spotStatus;
 }
 
 void SensorArray ::SensorSetup(int trigPins[], int echoPins[]) {

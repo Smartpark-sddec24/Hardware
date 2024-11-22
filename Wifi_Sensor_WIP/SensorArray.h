@@ -79,7 +79,7 @@ public:
    *  make references directly to the array. However, it's possible that we should make the array private since we don't
    *  anyone else in terms of other classes to be able to change its data.
    */
-  bool getStatus(int statusindex);
+  bool* getStatus() ;
 
   /**
   * Sets the pin modes for each of the sensors
