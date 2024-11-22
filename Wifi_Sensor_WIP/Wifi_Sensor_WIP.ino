@@ -63,28 +63,20 @@ void loop() {
     // Serial.println(sensorArray_LED.getStatus(i));  // gets the status of a spot (open=false, occupied=true)
 
     // sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. (open=false, occupied=true)
-    bool test_status = 0;
-    is_reserved = wifiConnection_HTTP.serverUpdateSpot(test_status, 1);  // post request posts the sensor data to a spot
-    Serial.print("server response MAIN:");
-    Serial.println(is_reserved);
-    if (is_reserved == 1) {          // checks if the server has the spot reserved
-      sensorArray_LED.setLED(3, 2);  // if the spot is reserved then turn yellow
-    } else if (test_status) {        //checks if our system has the spot as occupied or open
-      sensorArray_LED.setLED(3, 1);  //if the spot is occupied turn red
-    } else {
-      sensorArray_LED.setLED(3, 0);  //if the spot is occupied turn green
-    }
-    delay(5000);
+    // bool test_status = 0;
+    // is_reserved = wifiConnection_HTTP.serverUpdateSpot(test_status, 1);  // post request posts the sensor data to a spot
+    // Serial.print("server response MAIN:");
+    // Serial.println(is_reserved);
+    // if (is_reserved == 1) {          // checks if the server has the spot reserved
+    //   sensorArray_LED.setLED(3, 2);  // if the spot is reserved then turn yellow
+    // } else if (test_status) {        //checks if our system has the spot as occupied or open
+    //   sensorArray_LED.setLED(3, 1);  //if the spot is occupied turn red
+    // } else {
+    //   sensorArray_LED.setLED(3, 0);  //if the spot is occupied turn green
+    // }
+    // delay(5000);
 
     for (int i = 0; i < 4; i++) {
-
-      //   sensorArray_LED.setStatus(sensorArr[i], i);
-      //   delay(5000);
-
-      //   Serial.print("Status: ");
-      //   Serial.println(sensorArray_LED.getStatus(i));  // gets the status of a spot (open=false, occupied=true)
-
-      //   // sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. (open=false, occupied=true)
 
       //    is_reserved = wifiConnection_HTTP.serverUpdateSpot(sensorArray_LED.getStatus(i), i);  // post request posts the sensor data to a spot
 
@@ -94,19 +86,18 @@ void loop() {
       Serial.print("Status: ");
 
       Serial.println(sensorArray_LED.getStatus(i));             // gets the status of a spot (open, occupied)
-      sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //sets the LED to the correct color. Eventually will use serverGetStatus instead of getStatus
+      // sensorArray_LED.setLED(i, sensorArray_LED.getStatus(i));  //Dont need
       delay(5000);
+      // is_reserved = wifiConnection_HTTP.serverUpdateSpot(sensorArray_LED.getStatus(i), i);  // post request posts the sensor data to a spot
 
-      wifiConnection_HTTP.serverGetStatus();  //serverGetStatus returns a number value to use in setLED()
-
-      //   if (is_reserved) {                          // checks if the server has the spot reserved
-      //     sensorArray_LED.setLED(i, 2);             // if the spot is reserved then turn yellow
-      //   } else if (sensorArray_LED.getStatus(i)) {  //checks if our system has the spot as occupied or open
-      //     sensorArray_LED.setLED(i, 1);             //if the spot is occupied turn red
-      //   } else {
-      //     sensorArray_LED.setLED(i, 0);  //if the spot is occupied turn green
-      //   }
-      //   delay(5000);
+      if (is_reserved) {                          // checks if the server has the spot reserved
+        sensorArray_LED.setLED(i, 2);             // if the spot is reserved then turn yellow
+      } else if (sensorArray_LED.getStatus(i)) {  //checks if our system has the spot as occupied or open
+        sensorArray_LED.setLED(i, 1);             //if the spot is occupied turn red
+      } else {
+        sensorArray_LED.setLED(i, 0);  //if the spot is open turn green
+      }
+      delay(5000);
 
       //   // Set timer TC3 to call the TC3_Handler at 1Hz
       //   }
@@ -158,12 +149,12 @@ void loop() {
     ;  // Wait for synchronization
 }
 
-void TC3_Handler()  // Interrupt Service Routine (ISR) for timer TC3
-{
-  if (TC3->COUNT16.INTFLAG.bit.OVF)  // Check for overflow (OVF) interrupt
-  {
-    TC3->COUNT16.INTFLAG.bit.OVF = 1;  // Clear the OVF interrupt flag
-    // Put your timer overflow (OVF) code here...
-    timerFlag = true;
-  }
-}
+// void TC3_Handler()  // Interrupt Service Routine (ISR) for timer TC3
+// {
+//   if (TC3->COUNT16.INTFLAG.bit.OVF)  // Check for overflow (OVF) interrupt
+//   {
+//     TC3->COUNT16.INTFLAG.bit.OVF = 1;  // Clear the OVF interrupt flag
+//     // Put your timer overflow (OVF) code here...
+//     timerFlag = true;
+//   }
+// }
