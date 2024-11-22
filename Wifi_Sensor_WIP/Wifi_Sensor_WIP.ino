@@ -26,6 +26,8 @@ WifiConnection wifiConnection_HTTP(ssid);
 
 volatile bool timerFlag = false;
 
+byte mac[6]; // MAC address of our WiFi Shield
+
 void setup() {
   Serial.begin(9600);
   delay(5000);
@@ -42,6 +44,7 @@ void setup() {
   // Wifi connection
   Serial.println("WiFi connection begin");
   wifiConnection_HTTP.begin();
+  Wifi.macAddress(mac);
   //Interrupt Setup
   interruptSetup();
 }
