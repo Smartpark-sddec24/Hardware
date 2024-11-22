@@ -14,9 +14,6 @@
 WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
   status = WL_IDLE_STATUS;
-  previousMillisInfo = 0;
-  //intervalInfo = 5000;
-  interval = 0;
   connected = false;
 }
 
@@ -29,7 +26,7 @@ void WifiConnection ::begin() {
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
     // wait 10 seconds for connection:
-    delay(10000);
+    delay(5000);
   }
 
   connected = true;
@@ -40,27 +37,18 @@ void WifiConnection ::begin() {
 
 void WifiConnection ::wifiInfo() {
 
-  unsigned long currentMillisInfo = millis();
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
 
-  // if (interval < 1) {
-  // check if the time after the last update is bigger the interval
-  if (currentMillisInfo - previousMillisInfo >= intervalInfo) {
-    previousMillisInfo = currentMillisInfo;
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("RSSI: ");
+  Serial.println(rssi);
 
-    // print your board's IP address:
-    IPAddress ip = WiFi.localIP();
-    Serial.print("IP Address: ");
-    Serial.println(ip);
-
-    // print the received signal strength:
-    long rssi = WiFi.RSSI();
-    Serial.print("RSSI: ");
-    Serial.println(rssi);
-
-    // Get the connection status
-    status = WiFi.status();
-    checkConnectionStatus();
-  }
+  // Get the connection status
+  checkConnectionStatus();
 }
 
 void WifiConnection ::checkConnectionStatus() {
@@ -114,7 +102,6 @@ void WifiConnection ::reconnect() {
     }
     status = WiFi.begin(_ssid);
     attempts++;
-    // delay(5000); // This delay can be changed based on our real-time data needs
   }
 }
 

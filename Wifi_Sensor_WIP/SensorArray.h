@@ -56,12 +56,6 @@ public:
   bool spotStatus[4];
 
   /**
-   * This method takes in a distance sensor to take 5 measurements and return their average to increase the
-   *    system's accuracy.
-   */
-   double averageMeasurement(DistanceSensor sensor);
-
-  /**
    * This method currently takes in a single sensor and its corresponding status index in spotStatus, makes a
    *  measurement with the sensor and translates it into an updated status stored at statusIndex.
    * 
@@ -88,7 +82,7 @@ public:
   bool getStatus(int statusindex);
 
   /**
-  *Sets the pin modes for each of the sensors
+  * Sets the pin modes for each of the sensors
   */
   void SensorSetup(int trigPins[], int echoPins[]);
 
