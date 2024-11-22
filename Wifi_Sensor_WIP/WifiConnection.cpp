@@ -15,9 +15,6 @@
 WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
   status = WL_IDLE_STATUS;
-  previousMillisInfo = 0;
-  //intervalInfo = 5000;
-  interval = 0;
   connected = false;
 }
 
@@ -30,7 +27,7 @@ void WifiConnection ::begin() {
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
     // wait 10 seconds for connection:
-    delay(10000);
+    delay(5000);
   }
 
   connected = true;
@@ -41,27 +38,18 @@ void WifiConnection ::begin() {
 
 void WifiConnection ::wifiInfo() {
 
-  unsigned long currentMillisInfo = millis();
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
 
-  // if (interval < 1) {
-  // check if the time after the last update is bigger the interval
-  if (currentMillisInfo - previousMillisInfo >= intervalInfo) {
-    previousMillisInfo = currentMillisInfo;
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("RSSI: ");
+  Serial.println(rssi);
 
-    // print your board's IP address:
-    IPAddress ip = WiFi.localIP();
-    Serial.print("IP Address: ");
-    Serial.println(ip);
-
-    // print the received signal strength:
-    long rssi = WiFi.RSSI();
-    Serial.print("RSSI: ");
-    Serial.println(rssi);
-
-    // Get the connection status
-    status = WiFi.status();
-    checkConnectionStatus();
-  }
+  // Get the connection status
+  checkConnectionStatus();
 }
 
 void WifiConnection ::checkConnectionStatus() {
@@ -115,103 +103,40 @@ void WifiConnection ::reconnect() {
     }
     status = WiFi.begin(_ssid);
     attempts++;
-    // delay(5000); // This delay can be changed based on our real-time data needs
   }
 }
 
 // HTTP STUFF-----------------------------------------------
 //HTTP Requests
 WiFiClient wifi;
-char host[] = "10.48.9.236:5000";
-// char uuid[] = /*"get"/*UUID*/;
-HttpClient https(wifi, host);
+char host[] = "10.48.8.188";
+// char host[] ="f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io"; //Hardware url
 
-const int kNetworkDelay = 1000;
-const int kNetworkTimeout = 30 * 1000;
-
-// int WifiConnection ::serverGetStatus() {
-//   // GET REQUEST--------------------------------------
-//   Serial.println("making GET request");
-//   int err = 0, intResponse;
-//   err = https.get("/getStatus");
-//   int statusCode = https.responseStatusCode();
-//   String response = https.responseBody();
-
-//   Serial.print("Status code: ");
-//   Serial.println(statusCode);
-//   Serial.print("Response: ");
-//   Serial.println(response);
-//   intResponse = response.toInt();
-//   return intResponse;
-// }
-
-// int WifiConnection ::serverGetSpots(){
-//   int err = 0, intResponse;
-//   err = https.get("/getSpots");
-//   int statusCode = https.responseStatusCode();
-//   String response = https.responseBody();
-//    intResponse = response.toInt();
-//   return intResponse;
-// }
+HttpClient http(wifi, host, 5000);
 
 int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
-  int isReservedInt;
-int WifiConnection ::serverGetStatus() {
-  if(flag == false){
-    flag = true;
-  }
-  // GET REQUEST--------------------------------------
-  Serial.println("making GET request");
-  int err = 0, intResponse;
-  err = https.get("/getStatus");
-  int statusCode = https.responseStatusCode();
-  String response = https.responseBody();
-
-  Serial.print("Status code: ");
-  Serial.println(statusCode);
-  Serial.print("Response: ");
-  Serial.println(response);
-  intResponse = response.toInt();
-  flag = false;
-  return intResponse;
-}
-
-int WifiConnection ::serverGetSpots(){
-  if(flag == false){
-    flag = true;
-  }
-  int err = 0, intResponse;
-  err = https.get("/getSpots");
-  int statusCode = https.responseStatusCode();
-  String response = https.responseBody();
-   intResponse = response.toInt();
-  flag = false; 
-  return intResponse;
-}
-
-void WifiConnection ::serverUpdateSpot(int status, int id) {
-  if(flag == false){
-    flag = true;
-  }
-  String postData;
+  int isReservedInt = 4;
+  String isReserved;
   String contentType = "text/plain";
-  postData = "spot_id=%d&is_occupied=%b", spot_id, is_occupied;
+
+  char postData[100];
+  sprintf(postData, "/updateSpot?spot_id=%d&is_occupied=%d", spot_id, is_occupied);
+  Serial.print("POST DATA: ");
+  Serial.println(postData);
+
   Serial.println("making POST request");
-  https.post("/updateSpot?", contentType, postData);
+  http.post(postData);
 
   // read the status code and body of the response
-  int statusCode = https.responseStatusCode();
+  int statusCode = http.responseStatusCode();
   Serial.print("responseBody: ");
-  Serial.println(https.responseBody());
-  String isReserved = https.responseBody();
+
+  isReserved = http.responseBody();
   Serial.print("Status code: ");
   Serial.println(statusCode);
 
   Serial.print("isReserved: ");
   Serial.println(isReserved);
   isReservedInt = isReserved.toInt();
-
   return isReservedInt;
-  // delay(5000);
-  flag = false;
 }
