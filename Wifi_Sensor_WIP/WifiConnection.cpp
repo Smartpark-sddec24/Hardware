@@ -123,12 +123,8 @@ void WifiConnection ::reconnect() {
 WiFiClient wifi;
 char host[] = "10.48.8.188";
 // char host[] ="f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io"; //Hardware url
-// char uuid[] = /*"get"/*UUID*/;
+
 HttpClient http(wifi, host, 5000);
-
-// const int kNetworkDelay = 1000;
-// const int kNetworkTimeout = 30 * 1000;
-
 
 int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
   int isReservedInt = 4;
