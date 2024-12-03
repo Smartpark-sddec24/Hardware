@@ -20,6 +20,7 @@ SensorArray ::SensorArray() {
 }
 
 // NOTE: Removed averageMeasurement function modified setStatus to include this averaging functionality
+//TODO: Rip out averaging measurement here and put it into the main file loop
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   int measurements = 3;
   float avgDist = 0;

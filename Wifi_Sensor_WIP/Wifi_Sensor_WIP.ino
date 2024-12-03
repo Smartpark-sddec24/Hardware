@@ -26,6 +26,11 @@ WifiConnection wifiConnection_HTTP(ssid);
 bool is_reserved[4] = { 0, 0, 0, 0 };
 volatile bool timerFlag = false;
 
+/* 
+ * TODO: Add an measurementSum variable to keep track of measurement sum
+ *        Add a measurement counter used to divide the averageMeasurement to send in the request
+ */ 
+
 void setup() {
   Serial.begin(9600);
   delay(5000);
@@ -51,6 +56,9 @@ void loop() {
   bool* is_occupied_arr = sensorArray_LED.getStatus();
   // Make a POST request and handle setting LEDs
   if (timerFlag) {
+    /* TODO: Add an averaging calculation using averageMeasurement = measurementSum \ measurementCounter
+     *      
+     */
     timerFlag = false;
     // is_reserved = wifiConnection_HTTP.serverUpdateSpot(/*test_status -- TODO: figure out how to */, 1);  // post request posts the sensor data to a spot
     // is_reserved = wifiConnection_HTTP.serverUpdateSpot(is_occupied_arr, /*TODO:*/{ 1, 2, 3, 4 });  // post request posts the sensor data to a spot
