@@ -12,8 +12,12 @@
 
 class WifiConnection {
 public:
-  
-  bool flag = false;
+  int** spot_ids;
+
+  /*
+   * Flag to indicate that the spot ids have been retrieved from the server on a system start up
+   */
+  bool idFlag = false;
  
   /*
    * Constructs a WifiConnection which manages the WiFi connection
@@ -74,6 +78,11 @@ public:
    */
   int serverUpdateSpot(bool is_occupied, int spot_id);
 
+  /*
+   * Used to get the ids of the spots which correspond to the sensors on system start up.
+   * Returns - an array of spot ids
+   */
+  void serverGetSpotIds();
 
 private:
   /*

@@ -46,32 +46,35 @@ void setup() {
 
   // Wifi connection
   Serial.println("WiFi connection begin");
-  wifiConnection_HTTP.begin();
+  wifiConnection_HTTP.begin(); //Set up WiFi connection
+  wifiConnection_HTTP.serverGetSpotIds(); // GET request for spot ids.
+
   //Interrupt Setup
-  interruptSetup();
+  // interruptSetup();
 }
 
 void loop() {
 
   bool* is_occupied_arr = sensorArray_LED.getStatus();
   // Make a POST request and handle setting LEDs
-  if (timerFlag) {
+  // if (wifiConnection_HTTP.idFlag) {
     /* TODO: Add an averaging calculation using averageMeasurement = measurementSum \ measurementCounter
      *      
      */
-    timerFlag = false;
-    // is_reserved = wifiConnection_HTTP.serverUpdateSpot(/*test_status -- TODO: figure out how to */, 1);  // post request posts the sensor data to a spot
-    // is_reserved = wifiConnection_HTTP.serverUpdateSpot(is_occupied_arr, /*TODO:*/{ 1, 2, 3, 4 });  // post request posts the sensor data to a spot
+    // timerFlag = false;
+    int** ids = wifiConnection_HTTP.spot_ids;
 
-  }
+    is_reserved[0] = wifiConnection_HTTP.serverUpdateSpot(*is_occupied_arr, *wifiConnection_HTTP.spot_ids);  // post request posts the sensor data to a spot
+
+  // }
 
   // Take measurements and print their values
   for (int i = 0; i < 4; i++) {
-    char distPrint[100];
-    sprintf(distPrint, "avgDist %d:", i + 1);
-    Serial.print(distPrint);
+    // char distPrint[100];
+    // sprintf(distPrint, "avgDist %d:", i + 1);
+    // Serial.print(distPrint);
     sensorArray_LED.setStatus(sensorArr[i], i);
-    delay(1000);//Eventually delete but for troubleshooting leave
+    // delay(1000);//Eventually delete but for troubleshooting leave
   }
 
   is_occupied_arr = sensorArray_LED.getStatus();
@@ -83,7 +86,7 @@ void loop() {
     } else {
       sensorArray_LED.setLED(i, 0);  //if the spot is open turn green
     }
-    delay(500); //Eventually delete but for troubleshooting leave
+    // delay(500); //Eventually delete but for troubleshooting leave
   }
 
   /****************** Everything below this line is unofficial and subject to deletion in loop() ******************/
@@ -97,34 +100,34 @@ void loop() {
 
 /************************** Interrupt Setup and Handling **********************************/
 void interruptSetup() {
-  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_CLKEN |  // Set GCLK0 (48MHz) as clock source for timer TC3
-                      GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID_TCC2_TC3;
+  // GCLK->CLKCTRL.reg = GCLK_CLKCTRL_CLKEN |  // Set GCLK0 (48MHz) as clock source for timer TC3
+  //                     GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID_TCC2_TC3;
 
-  TC3->COUNT16.CTRLA.reg = TC_CTRLA_PRESCSYNC_PRESC |    // Wrap around on next prescaler clock
-                           TC_CTRLA_PRESCALER_DIV1024 |  // Set prescaler to 1024, 48MHz/1024 = 46.875kHz
-                           TC_CTRLA_WAVEGEN_MFRQ;        // Put the timer TC3 into match frequency (MFRQ) mode
+  // TC3->COUNT16.CTRLA.reg = TC_CTRLA_PRESCSYNC_PRESC |    // Wrap around on next prescaler clock
+  //                          TC_CTRLA_PRESCALER_DIV1024 |  // Set prescaler to 1024, 48MHz/1024 = 46.875kHz
+  //                          TC_CTRLA_WAVEGEN_MFRQ;        // Put the timer TC3 into match frequency (MFRQ) mode
 
-  TC3->COUNT16.CC[0].reg = 46874;  // 1Hz: 48MHz /(1024 * 1Hz) - 1 = 46874
-  while (TC3->COUNT16.STATUS.bit.SYNCBUSY && wifiConnection_HTTP.status != WL_CONNECTED)
-    ;  // Wait for synchronization
+  // TC3->COUNT16.CC[0].reg = 46874;  // 1Hz: 48MHz /(1024 * 1Hz) - 1 = 46874
+  // while (TC3->COUNT16.STATUS.bit.SYNCBUSY && wifiConnection_HTTP.status != WL_CONNECTED && wifiConnection_HTTP.flag)
+  //   ;  // Wait for synchronization
 
-  NVIC_SetPriority(TC3_IRQn, 0);  // Set the Nested Vector Interrupt Controller (NVIC) priority for TC3 to 0 (highest)
-  NVIC_EnableIRQ(TC3_IRQn);       // Connect TC3 to Nested Vector Interrupt Controller (NVIC)
+  // NVIC_SetPriority(TC3_IRQn, 0);  // Set the Nested Vector Interrupt Controller (NVIC) priority for TC3 to 0 (highest)
+  // NVIC_EnableIRQ(TC3_IRQn);       // Connect TC3 to Nested Vector Interrupt Controller (NVIC)
 
-  TC3->COUNT16.INTENSET.reg = TC_INTENSET_OVF;  // Enable TC3 overflow interrupts
+  // TC3->COUNT16.INTENSET.reg = TC_INTENSET_OVF;  // Enable TC3 overflow interrupts
 
-  TC3->COUNT16.CTRLA.bit.ENABLE = 1;  // Enable TC3
+  // TC3->COUNT16.CTRLA.bit.ENABLE = 1;  // Enable TC3
 
-  while (TC3->COUNT16.STATUS.bit.SYNCBUSY)
-    ;  // Wait for synchronization
+  // while (TC3->COUNT16.STATUS.bit.SYNCBUSY)
+  //   ;  // Wait for synchronization
 }
 
 void TC3_Handler()  // Interrupt Service Routine (ISR) for timer TC3
 {
-  if (TC3->COUNT16.INTFLAG.bit.OVF)  // Check for overflow (OVF) interrupt
-  {
-    TC3->COUNT16.INTFLAG.bit.OVF = 1;  // Clear the OVF interrupt flag
-    // Put your timer overflow (OVF) code here...
-    timerFlag = true;
-  }
+  // if (TC3->COUNT16.INTFLAG.bit.OVF)  // Check for overflow (OVF) interrupt
+  // {
+  //   TC3->COUNT16.INTFLAG.bit.OVF = 1;  // Clear the OVF interrupt flag
+  //   // Put your timer overflow (OVF) code here...
+  //   timerFlag = true;
+  // }
 }

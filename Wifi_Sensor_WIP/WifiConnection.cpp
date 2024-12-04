@@ -1,3 +1,4 @@
+#include <stdio.h>
 /**
  * Cut out serial monitor calls
  * Create a function to update the main code file
@@ -16,7 +17,8 @@ WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
   status = WL_IDLE_STATUS;
   connected = false;
-}
+  spot_ids;
+  }
 
 void WifiConnection ::begin() {
   while (status != WL_CONNECTED) {  // While the connection is not successful
@@ -27,7 +29,7 @@ void WifiConnection ::begin() {
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
     // wait 10 seconds for connection:
-    delay(5000);
+    // delay(5000);
   }
 
   connected = true;
@@ -109,7 +111,7 @@ void WifiConnection ::reconnect() {
 // HTTP STUFF-----------------------------------------------
 //HTTP Requests
 WiFiClient wifi;
-char host[] = "10.48.8.188";
+char host[] = "10.48.9.221";
 // char host[] ="f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io"; //Hardware url
 
 HttpClient http(wifi, host, 5000);
@@ -121,22 +123,58 @@ int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
 
   char postData[100];
   sprintf(postData, "/updateSpot?spot_id=%d&is_occupied=%d", spot_id, is_occupied);
-  Serial.print("POST DATA: ");
-  Serial.println(postData);
+  // Serial.print("POST DATA: ");
+  // Serial.println(postData);
 
-  Serial.println("making POST request");
+  // Serial.println("making POST request");
   http.post(postData);
 
   // read the status code and body of the response
   int statusCode = http.responseStatusCode();
-  Serial.print("responseBody: ");
+  // Serial.print("responseBody: ");
 
   isReserved = http.responseBody();
-  Serial.print("Status code: ");
-  Serial.println(statusCode);
+  // Serial.print("Status code: ");
+  // Serial.println(statusCode);
 
-  Serial.print("isReserved: ");
-  Serial.println(isReserved);
+  // Serial.print("isReserved: ");
+  // Serial.println(isReserved);
   isReservedInt = isReserved.toInt();
   return isReservedInt;
 }
+
+void WifiConnection ::serverGetSpotIds() {
+  Serial.println("Making GET Request");
+  String contentType = "text/plain";
+
+  char getData[100];
+  // Serial.println(MAC_ADDRESS);
+  sprintf(getData, "/initialize?mac_address=%s", MAC_ADDRESS);
+  http.get(getData);
+  // Serial.println(getData);
+
+  int statusCode = http.responseStatusCode();
+  Serial.print("Status Code: ");
+  Serial.println(statusCode);
+  String response = http.responseBody();
+  Serial.print("Response: ");
+  Serial.println(response);
+
+  *(spot_ids) << static_cast<int>(response[1]);
+  *(spot_ids+1) << static_cast<int>(response[3]);
+  *(spot_ids+2) << static_cast<int>(response[4]);
+  *(spot_ids+3) << static_cast<int>(response[5]);
+
+  Serial.print("id 1: ");
+  Serial.println(*(spot_ids));
+  Serial.print("id 2: ");
+  Serial.println(*(spot_ids + 1));
+  Serial.print("id 3: ");
+  Serial.println(*(spot_ids + 2));
+  Serial.print("id 4: ");
+  Serial.println(*(spot_ids + 3));
+
+  idFlag = true;
+}
+
+
