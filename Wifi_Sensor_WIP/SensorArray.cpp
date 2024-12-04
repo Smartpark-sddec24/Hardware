@@ -32,7 +32,7 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   
   Serial.println(avgDist);
   // Serial.println(avgDist);
-  if (avgDist <= 30.0) {
+  if (avgDist <= 70.0) {
     spotStatus[statusIndex] = 1;
   } else {
     spotStatus[statusIndex] = 0;
