@@ -22,7 +22,7 @@ SensorArray ::SensorArray() {
 // NOTE: Removed averageMeasurement function modified setStatus to include this averaging functionality
 //TODO: Rip out averaging measurement here and put it into the main file loop
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
-  int measurements = 3;
+  int measurements = 10;
   float avgDist = 0;
 
   for (int i = 0; i < measurements; i++) {
@@ -30,8 +30,8 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   }
   avgDist /= measurements;
   
+  Serial.print("Average distance: ");
   Serial.println(avgDist);
-  // Serial.println(avgDist);
   if (avgDist <= 70.0) {
     spotStatus[statusIndex] = 1;
   } else {

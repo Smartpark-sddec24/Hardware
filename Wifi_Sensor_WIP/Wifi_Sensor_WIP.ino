@@ -23,13 +23,13 @@ WifiConnection wifiConnection_HTTP(ssid);
 
 // static boolean toggle = true;
 // static boolean tmp = toggle;
-bool is_reserved[4] = { 0, 0, 0, 0 };
+int* is_reserved;
 volatile bool timerFlag = false;
 
 /* 
  * TODO: Add an measurementSum variable to keep track of measurement sum
  *        Add a measurement counter used to divide the averageMeasurement to send in the request
- */ 
+ */
 
 void setup() {
   Serial.begin(9600);
@@ -46,8 +46,8 @@ void setup() {
 
   // Wifi connection
   Serial.println("WiFi connection begin");
-  wifiConnection_HTTP.begin(); //Set up WiFi connection
-  wifiConnection_HTTP.serverGetSpotIds(); // GET request for spot ids.
+  wifiConnection_HTTP.begin();             //Set up WiFi connection
+  wifiConnection_HTTP.serverGetSpotIds();  // GET request for spot ids.
 
   //Interrupt Setup
   // interruptSetup();
@@ -58,23 +58,23 @@ void loop() {
   bool* is_occupied_arr = sensorArray_LED.getStatus();
   // Make a POST request and handle setting LEDs
   // if (wifiConnection_HTTP.idFlag) {
-    /* TODO: Add an averaging calculation using averageMeasurement = measurementSum \ measurementCounter
+  /* TODO: Add an averaging calculation using averageMeasurement = measurementSum \ measurementCounter
      *      
      */
-    // timerFlag = false;
-    int** ids = wifiConnection_HTTP.spot_ids;
-
-    is_reserved[0] = wifiConnection_HTTP.serverUpdateSpot(*is_occupied_arr, *wifiConnection_HTTP.spot_ids);  // post request posts the sensor data to a spot
-
+  // timerFlag = false;
+  // int** ids = wifiConnection_HTTP.spot_ids;
+  is_reserved = wifiConnection_HTTP.serverUpdateSpot(is_occupied_arr, wifiConnection_HTTP.spot_ids);  // post request posts the sensor data to a spot
   // }
 
   // Take measurements and print their values
   for (int i = 0; i < 4; i++) {
-    // char distPrint[100];
-    // sprintf(distPrint, "avgDist %d:", i + 1);
-    // Serial.print(distPrint);
+    char distPrint[100];
+    sprintf(distPrint, "avgDist %d:", i + 1);
+    Serial.print(distPrint);
+    // Serial.print("Sensor: ");
+    // Serial.println(i);
     sensorArray_LED.setStatus(sensorArr[i], i);
-    // delay(1000);//Eventually delete but for troubleshooting leave
+    delay(100);  //Eventually delete but for troubleshooting leave
   }
 
   is_occupied_arr = sensorArray_LED.getStatus();
@@ -93,9 +93,8 @@ void loop() {
   // is_reserved = wifiConnection_HTTP.serverUpdateSpot(test_status, 1);  // post request posts the sensor data to a spot
 
   // And just stop, now that we've tried a download
-  // while (1)
-  //   ;
-  
+  while (1)
+    ;
 }
 
 /************************** Interrupt Setup and Handling **********************************/

@@ -12,7 +12,7 @@
 
 class WifiConnection {
 public:
-  int** spot_ids;
+  int spot_ids[4];
 
   /*
    * Flag to indicate that the spot ids have been retrieved from the server on a system start up
@@ -76,7 +76,7 @@ public:
    * TODO: Update parameters to take in an array of statuses and ids to post in
    *    a request body then parse an array of responses
    */
-  int serverUpdateSpot(bool is_occupied, int spot_id);
+  int* serverUpdateSpot(bool* is_occupied, int* spot_ids);
 
   /*
    * Used to get the ids of the spots which correspond to the sensors on system start up.

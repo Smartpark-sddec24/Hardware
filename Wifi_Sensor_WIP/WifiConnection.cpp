@@ -18,7 +18,7 @@ WifiConnection ::WifiConnection(const char* ssid) {
   status = WL_IDLE_STATUS;
   connected = false;
   spot_ids;
-  }
+}
 
 void WifiConnection ::begin() {
   while (status != WL_CONNECTED) {  // While the connection is not successful
@@ -111,20 +111,37 @@ void WifiConnection ::reconnect() {
 // HTTP STUFF-----------------------------------------------
 //HTTP Requests
 WiFiClient wifi;
-char host[] = "10.48.9.221";
+char host[] = "10.48.9.76";
 // char host[] ="f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io"; //Hardware url
 
 HttpClient http(wifi, host, 5000);
 
-int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
-  int isReservedInt = 4;
-  String isReserved;
+int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
+
+  int* isReservedInt;
+  char isReserved[25];
   String contentType = "text/plain";
 
   char postData[100];
-  sprintf(postData, "/updateSpot?spot_id=%d&is_occupied=%d", spot_id, is_occupied);
-  // Serial.print("POST DATA: ");
-  // Serial.println(postData);
+  char postInfo[100];
+  char spotInfoBuff[100];
+  char finalPostInfo [200];
+  postInfo[0] = '[';
+
+  for (int i = 0; i < 4; i++) {
+    if (i < 3) {
+      sprintf(spotInfoBuff, "{\"spot_id\":%d,\"is_occupied\":%d},", spot_ids[i], is_occupied[i]);
+    } else {
+      sprintf(spotInfoBuff, "{\"spot_id\":%d,\"is_occupied\":%d}]", spot_ids[i], is_occupied[i]);
+    }
+    // postInfo = postInfo + spotInfoBuff;
+    strcat(postInfo, spotInfoBuff);
+  }
+  Serial.print("POST INFO: ");
+  Serial.println(postInfo);
+  sprintf(postData, "/updateSpot?%s", postInfo);
+  Serial.print("POST DATA: ");
+  Serial.println(postData);
 
   // Serial.println("making POST request");
   http.post(postData);
@@ -133,13 +150,13 @@ int WifiConnection ::serverUpdateSpot(bool is_occupied, int spot_id) {
   int statusCode = http.responseStatusCode();
   // Serial.print("responseBody: ");
 
-  isReserved = http.responseBody();
+  http.responseBody().toCharArray(isReserved, 25);;
   // Serial.print("Status code: ");
   // Serial.println(statusCode);
 
   // Serial.print("isReserved: ");
   // Serial.println(isReserved);
-  isReservedInt = isReserved.toInt();
+  sscanf(isReserved, "[%d,%d,%d,%d]", &isReservedInt[0], &isReservedInt[1], &isReservedInt[2], &isReservedInt[3]);
   return isReservedInt;
 }
 
@@ -156,25 +173,20 @@ void WifiConnection ::serverGetSpotIds() {
   int statusCode = http.responseStatusCode();
   Serial.print("Status Code: ");
   Serial.println(statusCode);
-  String response = http.responseBody();
+  char response[25];
+  http.responseBody().toCharArray(response, 25);
   Serial.print("Response: ");
   Serial.println(response);
-
-  *(spot_ids) << static_cast<int>(response[1]);
-  *(spot_ids+1) << static_cast<int>(response[3]);
-  *(spot_ids+2) << static_cast<int>(response[4]);
-  *(spot_ids+3) << static_cast<int>(response[5]);
+  sscanf(response, "[%d,%d,%d,%d]", &spot_ids[0], &spot_ids[1], &spot_ids[2], &spot_ids[3]);
 
   Serial.print("id 1: ");
-  Serial.println(*(spot_ids));
+  Serial.println(spot_ids[0]);
   Serial.print("id 2: ");
-  Serial.println(*(spot_ids + 1));
+  Serial.println(spot_ids[1]);
   Serial.print("id 3: ");
-  Serial.println(*(spot_ids + 2));
+  Serial.println(spot_ids[2]);
   Serial.print("id 4: ");
-  Serial.println(*(spot_ids + 3));
+  Serial.println(spot_ids[3]);
 
   idFlag = true;
 }
-
-
