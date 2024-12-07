@@ -47,8 +47,11 @@ void setup() {
   // Wifi connection
   Serial.println("WiFi connection begin");
   wifiConnection_HTTP.begin();             //Set up WiFi connection
-  wifiConnection_HTTP.serverGetSpotIds();  // GET request for spot ids.
-
+  int responseCode = 0;
+  while (responseCode != 200){
+      responseCode = wifiConnection_HTTP.serverGetSpotIds();  // GET request for spot ids.
+  }
+    
   //Interrupt Setup
   // interruptSetup();
 }
@@ -69,8 +72,8 @@ void loop() {
   // Take measurements and print their values
   for (int i = 0; i < 4; i++) {
     char distPrint[100];
-    sprintf(distPrint, "avgDist %d:", i + 1);
-    Serial.print(distPrint);
+    // sprintf(distPrint, "avgDist %d:", i + 1);
+    // Serial.print(distPrint);
     // Serial.print("Sensor: ");
     // Serial.println(i);
     sensorArray_LED.setStatus(sensorArr[i], i);
@@ -93,8 +96,8 @@ void loop() {
   // is_reserved = wifiConnection_HTTP.serverUpdateSpot(test_status, 1);  // post request posts the sensor data to a spot
 
   // And just stop, now that we've tried a download
-  while (1)
-    ;
+  // while (1)
+  //   ;
 }
 
 /************************** Interrupt Setup and Handling **********************************/

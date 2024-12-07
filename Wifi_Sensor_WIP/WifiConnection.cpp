@@ -120,13 +120,10 @@ int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
 
   int* isReservedInt;
   char isReserved[25];
-  String contentType = "text/plain";
+  String contentType = "application/json";
 
-  char postData[100];
-  char postInfo[100];
-  char spotInfoBuff[100];
-  char finalPostInfo [200];
-  postInfo[0] = '[';
+  char postInfo[300] = {'[', '\0'};
+  char spotInfoBuff[300];
 
   for (int i = 0; i < 4; i++) {
     if (i < 3) {
@@ -134,17 +131,15 @@ int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
     } else {
       sprintf(spotInfoBuff, "{\"spot_id\":%d,\"is_occupied\":%d}]", spot_ids[i], is_occupied[i]);
     }
-    // postInfo = postInfo + spotInfoBuff;
     strcat(postInfo, spotInfoBuff);
   }
+
   Serial.print("POST INFO: ");
   Serial.println(postInfo);
-  sprintf(postData, "/updateSpot?%s", postInfo);
-  Serial.print("POST DATA: ");
-  Serial.println(postData);
 
   // Serial.println("making POST request");
-  http.post(postData);
+  http.post("/updateSpot", contentType, postInfo);
+  Serial.println("POST complete");
 
   // read the status code and body of the response
   int statusCode = http.responseStatusCode();
@@ -160,7 +155,7 @@ int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
   return isReservedInt;
 }
 
-void WifiConnection ::serverGetSpotIds() {
+int WifiConnection ::serverGetSpotIds() {
   Serial.println("Making GET Request");
   String contentType = "text/plain";
 
@@ -189,4 +184,6 @@ void WifiConnection ::serverGetSpotIds() {
   Serial.println(spot_ids[3]);
 
   idFlag = true;
+
+  return statusCode;
 }

@@ -82,7 +82,7 @@ public:
    * Used to get the ids of the spots which correspond to the sensors on system start up.
    * Returns - an array of spot ids
    */
-  void serverGetSpotIds();
+  int serverGetSpotIds();
 
 private:
   /*
