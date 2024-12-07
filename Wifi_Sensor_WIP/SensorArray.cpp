@@ -20,7 +20,6 @@ SensorArray ::SensorArray() {
 }
 
 // NOTE: Removed averageMeasurement function modified setStatus to include this averaging functionality
-//TODO: Rip out averaging measurement here and put it into the main file loop
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   int measurements = 10;
   float avgDist = 0;
@@ -30,8 +29,8 @@ void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   }
   avgDist /= measurements;
   
-  // Serial.print("Average distance: ");
-  // Serial.println(avgDist);
+  Serial.print("Average distance: ");
+  Serial.println(avgDist);
   if (avgDist <= 70.0) {
     spotStatus[statusIndex] = 1;
   } else {
@@ -62,13 +61,10 @@ void SensorArray ::LEDsetup() {
 }
 void SensorArray ::setLED(int index, int status) {
   if (status == 0) {
-    // Serial.println("green");
     setColor(0, 255, 0, index);  //Green
   } else if (status == 1) {
-    // Serial.println("red");
     setColor(255, 0, 0, index);  //Red
   } else {
-    // Serial.println("yellow");
     setColor(255, 255, 0, index);  //yellow
   }
 }

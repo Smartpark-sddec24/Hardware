@@ -112,7 +112,6 @@ void WifiConnection ::reconnect() {
 //HTTP Requests
 WiFiClient wifi;
 char host[] = "10.48.9.76";
-// char host[] ="f2cfd6bf-13e6-4e69-b465-99e6732e63bc.mock.pstmn.io"; //Hardware url
 
 HttpClient http(wifi, host, 5000);
 
@@ -143,14 +142,14 @@ int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
 
   // read the status code and body of the response
   int statusCode = http.responseStatusCode();
-  // Serial.print("responseBody: ");
+  Serial.print("responseBody: ");
 
   http.responseBody().toCharArray(isReserved, 25);;
-  // Serial.print("Status code: ");
-  // Serial.println(statusCode);
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
 
-  // Serial.print("isReserved: ");
-  // Serial.println(isReserved);
+  Serial.print("isReserved: ");
+  Serial.println(isReserved);
   sscanf(isReserved, "[%d,%d,%d,%d]", &isReservedInt[0], &isReservedInt[1], &isReservedInt[2], &isReservedInt[3]);
   return isReservedInt;
 }
@@ -160,18 +159,14 @@ int WifiConnection ::serverGetSpotIds() {
   String contentType = "text/plain";
 
   char getData[100];
-  // Serial.println(MAC_ADDRESS);
   sprintf(getData, "/initialize?mac_address=%s", MAC_ADDRESS);
   http.get(getData);
-  // Serial.println(getData);
 
   int statusCode = http.responseStatusCode();
   Serial.print("Status Code: ");
   Serial.println(statusCode);
   char response[25];
   http.responseBody().toCharArray(response, 25);
-  Serial.print("Response: ");
-  Serial.println(response);
   sscanf(response, "[%d,%d,%d,%d]", &spot_ids[0], &spot_ids[1], &spot_ids[2], &spot_ids[3]);
 
   Serial.print("id 1: ");
@@ -182,8 +177,6 @@ int WifiConnection ::serverGetSpotIds() {
   Serial.println(spot_ids[2]);
   Serial.print("id 4: ");
   Serial.println(spot_ids[3]);
-
-  idFlag = true;
 
   return statusCode;
 }
