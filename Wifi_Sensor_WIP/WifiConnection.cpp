@@ -28,9 +28,11 @@ void WifiConnection ::begin() {
     // Connect to WPA/WPA2 network:
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
-    // wait 10 seconds for connection:
-    // delay(5000);
+    // wait 5 seconds for connection:
+    delay(5000);
   }
+
+  WiFi.macAddress(mac);
 
   connected = true;
   // Connection successful
@@ -159,7 +161,7 @@ int WifiConnection ::serverGetSpotIds() {
   String contentType = "text/plain";
 
   char getData[100];
-  sprintf(getData, "/initialize?mac_address=%s", MAC_ADDRESS);
+  sprintf(getData, "/initialize?mac_address=%s", mac);
   http.get(getData);
 
   int statusCode = http.responseStatusCode();

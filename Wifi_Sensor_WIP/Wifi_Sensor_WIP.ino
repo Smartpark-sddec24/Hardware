@@ -54,7 +54,6 @@ void loop() {
   
   // Take measurements and print their values
   for (int i = 0; i < 4; i++) {
-    char distPrint[100];
     sensorArray_LED.setStatus(sensorArr[i], i);
     delay(100);  //Eventually delete but for troubleshooting leave
   }

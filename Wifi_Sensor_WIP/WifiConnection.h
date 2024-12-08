@@ -18,6 +18,11 @@ public:
    * Flag to indicate that the spot ids have been retrieved from the server on a system start up
    */
   bool idFlag = false;
+
+  /**
+   * The MAC address of this board
+   */ 
+  byte mac[6];
  
   /*
    * Constructs a WifiConnection which manages the WiFi connection
