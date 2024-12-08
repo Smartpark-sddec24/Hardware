@@ -53,7 +53,7 @@ public:
    *  of the post and/or preprocessing necessary for making a POST request, currently having to translate it into a bool
    *  from an int.
    */
-  int spotStatus[4];
+  bool spotStatus[4];
 
   /**
    * This method currently takes in a single sensor and its corresponding status index in spotStatus, makes a
@@ -79,7 +79,34 @@ public:
    *  make references directly to the array. However, it's possible that we should make the array private since we don't
    *  anyone else in terms of other classes to be able to change its data.
    */
-  int getStatus(int statusindex);
+  bool* getStatus() ;
+
+  /**
+  * Sets the pin modes for each of the sensors
+  */
+  void SensorSetup(int trigPins[], int echoPins[]);
+
+  /****************************************
+  LED FUNCTIONS
+  *****************************************/
+
+  /*
+   * Defines each LED pin array as an output pin
+   */
+  void LEDsetup ();
+
+  /*
+   * Takes in the current status of a sensor at some index and sets the corresponding led to either
+   *    of the following colors:
+   *        Green = Open
+   *        Red   = Occupied
+   */
+  void setLED(int index, int status);
+
+  /*
+   * Sets the analog value of each 
+   */
+  void setColor(int redValue, int greenValue, int blueValue, int index);
 };
 
 #endif

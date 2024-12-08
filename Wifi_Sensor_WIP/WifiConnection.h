@@ -7,11 +7,18 @@
 #define WifiConnection_h
 
 #include <Arduino.h>
-#include <WiFiNINA.h> //Library by Arduino
+#include <WiFiNINA.h>  //Library by Arduino
 #include "arduino_secrets.h"
 
 class WifiConnection {
 public:
+  int spot_ids[4];
+
+  /*
+   * Flag to indicate that the spot ids have been retrieved from the server on a system start up
+   */
+  bool idFlag = false;
+ 
   /*
    * Constructs a WifiConnection which manages the WiFi connection
    *    of an Arduino Nano 33 IoT
@@ -19,15 +26,11 @@ public:
    * @param ssid - the ssid of the WiFi network the board is connecting to
    */
   WifiConnection(const char* ssid);
-  
+
   /*
    * Establishes an initial connection to the network
    */
   void begin();
-
-  /*
-   * This function detects a flag that 
-   */
 
   /*
    * Displays the following connection information:
@@ -36,7 +39,7 @@ public:
    *    Received Signal Strength
    */
   void wifiInfo();
-  
+
   /*
    * Checks the connection status and reconnects upon a disconnect
    *    Status codes:
@@ -59,33 +62,28 @@ public:
   void disconnect();
 
   /*
-   * Returns the IP Address of the board
-   */
-  // IPAddress getIPAddess();
-
-  /*
-   * The last time the connection information was displayed
-   * ------ MAY NOT BE NECESSARY ------
-   */
-  unsigned long previousMillisInfo;
-
-  /*
-   * A five second interval between connection information displays
-   * ------ MAY NOT BE NECESSARY ------
-   */
-  const long intervalInfo = 5000;
-
-  /*
-   * A flag to display connection information
-   * 0  -> Display connection information
-   * >0 -> Do not display connection information
-   */
-  int interval;
-
-  /*
    * A value storing the status of the connection
    */
   int status;
+
+  // NOTE: Removed both GET requests as they are unnecessary
+
+  /*
+   * Posts an updated status for a spot with id 'id' to the server.
+   * The response of this request will carry an 'is_reserved' status and this will
+   *   be used to overwrite our LED color to indicate a reservation for that spot.
+   * 
+   * TODO: Update parameters to take in an array of statuses and ids to post in
+   *    a request body then parse an array of responses
+   */
+  int* serverUpdateSpot(bool* is_occupied, int* spot_ids);
+
+  /*
+   * Used to get the ids of the spots which correspond to the sensors on system start up.
+   * Returns - an array of spot ids
+   */
+  int serverGetSpotIds();
+
 private:
   /*
    * This function reconnects the board to the network

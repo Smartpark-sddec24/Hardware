@@ -1,3 +1,4 @@
+#include <stdio.h>
 /**
  * Cut out serial monitor calls
  * Create a function to update the main code file
@@ -9,26 +10,26 @@
 #include "Arduino.h"
 #include "WifiConnection.h"
 #include "arduino_secrets.h"
+#include <ArduinoHttpClient.h>
+
 
 WifiConnection ::WifiConnection(const char* ssid) {
   bcopy(ssid, _ssid, strlen(ssid));
   status = WL_IDLE_STATUS;
-  previousMillisInfo = 0;
-  //intervalInfo = 5000;
-  interval = 0;
   connected = false;
+  spot_ids;
 }
 
 void WifiConnection ::begin() {
   while (status != WL_CONNECTED) {  // While the connection is not successful
     Serial.print("Attempting to connect to network: ");
     Serial.println(_ssid);
-  
+
     // Connect to WPA/WPA2 network:
     status = WiFi.begin(_ssid);
     checkConnectionStatus();
     // wait 10 seconds for connection:
-    delay(10000);
+    // delay(5000);
   }
 
   connected = true;
@@ -39,27 +40,18 @@ void WifiConnection ::begin() {
 
 void WifiConnection ::wifiInfo() {
 
-  unsigned long currentMillisInfo = millis();
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
 
-  // if (interval < 1) {
-    // check if the time after the last update is bigger the interval
-    if (currentMillisInfo - previousMillisInfo >= intervalInfo) {
-      previousMillisInfo = currentMillisInfo;
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("RSSI: ");
+  Serial.println(rssi);
 
-      // print your board's IP address:
-      IPAddress ip = WiFi.localIP();
-      Serial.print("IP Address: ");
-      Serial.println(ip);
-
-      // print the received signal strength:
-      long rssi = WiFi.RSSI();
-      Serial.print("RSSI: ");
-      Serial.println(rssi);
-
-      // Get the connection status
-      status = WiFi.status();
-      checkConnectionStatus();
-    }
+  // Get the connection status
+  checkConnectionStatus();
 }
 
 void WifiConnection ::checkConnectionStatus() {
@@ -68,8 +60,8 @@ void WifiConnection ::checkConnectionStatus() {
   Serial.print("Status: ");
   Serial.print(status);
   Serial.print(" ");
-  
-  switch(status) {
+
+  switch (status) {
     case 0:
       Serial.println("System idle");
       break;
@@ -112,7 +104,79 @@ void WifiConnection ::reconnect() {
       NVIC_SystemReset();
     }
     status = WiFi.begin(_ssid);
-    attempts ++;
-    delay(5000); // This delay can be changed based on our real-time data needs
+    attempts++;
   }
+}
+
+// HTTP STUFF-----------------------------------------------
+//HTTP Requests
+WiFiClient wifi;
+char host[] = "10.48.9.76";
+
+HttpClient http(wifi, host, 5000);
+
+int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
+
+  int* isReservedInt;
+  char isReserved[25];
+  String contentType = "application/json";
+
+  char postInfo[300] = {'[', '\0'};
+  char spotInfoBuff[300];
+
+  for (int i = 0; i < 4; i++) {
+    if (i < 3) {
+      sprintf(spotInfoBuff, "{\"spot_id\":%d,\"is_occupied\":%d},", spot_ids[i], is_occupied[i]);
+    } else {
+      sprintf(spotInfoBuff, "{\"spot_id\":%d,\"is_occupied\":%d}]", spot_ids[i], is_occupied[i]);
+    }
+    strcat(postInfo, spotInfoBuff);
+  }
+
+  Serial.print("POST INFO: ");
+  Serial.println(postInfo);
+
+  // Serial.println("making POST request");
+  http.post("/updateSpot", contentType, postInfo);
+  Serial.println("POST complete");
+
+  // read the status code and body of the response
+  int statusCode = http.responseStatusCode();
+  Serial.print("responseBody: ");
+
+  http.responseBody().toCharArray(isReserved, 25);;
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
+
+  Serial.print("isReserved: ");
+  Serial.println(isReserved);
+  sscanf(isReserved, "[%d,%d,%d,%d]", &isReservedInt[0], &isReservedInt[1], &isReservedInt[2], &isReservedInt[3]);
+  return isReservedInt;
+}
+
+int WifiConnection ::serverGetSpotIds() {
+  Serial.println("Making GET Request");
+  String contentType = "text/plain";
+
+  char getData[100];
+  sprintf(getData, "/initialize?mac_address=%s", MAC_ADDRESS);
+  http.get(getData);
+
+  int statusCode = http.responseStatusCode();
+  Serial.print("Status Code: ");
+  Serial.println(statusCode);
+  char response[25];
+  http.responseBody().toCharArray(response, 25);
+  sscanf(response, "[%d,%d,%d,%d]", &spot_ids[0], &spot_ids[1], &spot_ids[2], &spot_ids[3]);
+
+  Serial.print("id 1: ");
+  Serial.println(spot_ids[0]);
+  Serial.print("id 2: ");
+  Serial.println(spot_ids[1]);
+  Serial.print("id 3: ");
+  Serial.println(spot_ids[2]);
+  Serial.print("id 4: ");
+  Serial.println(spot_ids[3]);
+
+  return statusCode;
 }
