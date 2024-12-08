@@ -19,7 +19,6 @@ SensorArray ::SensorArray() {
   }
 }
 
-// NOTE: Removed averageMeasurement function modified setStatus to include this averaging functionality
 void SensorArray ::setStatus(DistanceSensor sensor, int statusIndex) {
   int measurements = 10;
   float avgDist = 0;
@@ -59,6 +58,7 @@ void SensorArray ::LEDsetup() {
     pinMode(bluePin[i], OUTPUT);
   }
 }
+
 void SensorArray ::setLED(int index, int status) {
   if (status == 0) {
     setColor(0, 255, 0, index);  //Green
