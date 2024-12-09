@@ -1,3 +1,4 @@
+#include "api/Print.h"
 #include <stdio.h>
 /**
  * Cut out serial monitor calls
@@ -113,7 +114,7 @@ void WifiConnection ::reconnect() {
 // HTTP STUFF-----------------------------------------------
 //HTTP Requests
 WiFiClient wifi;
-char host[] = "10.48.9.76";
+char host[] = "10.48.8.116";
 
 HttpClient http(wifi, host, 5000);
 
@@ -160,15 +161,20 @@ int WifiConnection ::serverGetSpotIds() {
   Serial.println("Making GET Request");
   String contentType = "text/plain";
 
+  char mac_address[(sizeof mac) + 1];
+  // mac_address[sizeof mac] = 0;
+  sprintf(mac_address, "%x:%x:%x:%x:%x:%x", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
+  Serial.print("MAC: ");
+
   char getData[100];
-  sprintf(getData, "/initialize?mac_address=%s", mac);
+  sprintf(getData, "/initialize?mac_address=%s", mac_address);
   http.get(getData);
 
   int statusCode = http.responseStatusCode();
   Serial.print("Status Code: ");
   Serial.println(statusCode);
-  char response[25];
-  http.responseBody().toCharArray(response, 25);
+  char response[100];
+  http.responseBody().toCharArray(response, 100);
   sscanf(response, "[%d,%d,%d,%d]", &spot_ids[0], &spot_ids[1], &spot_ids[2], &spot_ids[3]);
 
   Serial.print("id 1: ");

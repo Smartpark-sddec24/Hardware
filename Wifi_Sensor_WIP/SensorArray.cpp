@@ -14,7 +14,7 @@ int bluePin[] = { 16, 19, 13, 2 };   //[A2,A5,D13,D2]
 
 
 SensorArray ::SensorArray() {
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 4; i++) {
     spotStatus[i] = false;
   }
 }

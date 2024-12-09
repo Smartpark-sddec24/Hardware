@@ -42,15 +42,16 @@ void setup() {
   wifiConnection_HTTP.begin();             //Set up WiFi connection
   int responseCode = 0;
   while (responseCode != 200){
-      responseCode = wifiConnection_HTTP.serverGetSpotIds();  // GET request for spot ids.
+      responseCode = wifiConnection_HTTP.serverGetSpotIds();
+      Serial.println("After GET");  // GET request for spot ids.
   }
-  wifiConnection_HTTP.idFlag = true;
+  // wifiConnection_HTTP.idFlag = true;
 }
 
 void loop() {
-
+  Serial.println("Entered main loop");
   bool* is_occupied_arr = sensorArray_LED.getStatus();
-  is_reserved = wifiConnection_HTTP.serverUpdateSpot(is_occupied_arr, wifiConnection_HTTP.spot_ids);  // post request posts the sensor data to a spot
+  // is_reserved = wifiConnection_HTTP.serverUpdateSpot(is_occupied_arr, wifiConnection_HTTP.spot_ids);  // post request posts the sensor data to a spot
   
   // Take measurements and print their values
   for (int i = 0; i < 4; i++) {
