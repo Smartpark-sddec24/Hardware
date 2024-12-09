@@ -162,29 +162,21 @@ int WifiConnection ::serverGetSpotIds() {
   String contentType = "text/plain";
 
   char mac_address[(sizeof mac) + 1];
-  // mac_address[sizeof mac] = 0;
-  sprintf(mac_address, "%x:%x:%x:%x:%x:%x", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
-  Serial.print("MAC: ");
+  mac_address[sizeof mac] = 0;
+  // sprintf(mac_address, "%x:%x:%x:%x:%x:%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  snprintf(mac_address, sizeof(mac_address), "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+  Serial.println("Mac address");
 
   char getData[100];
   sprintf(getData, "/initialize?mac_address=%s", mac_address);
   http.get(getData);
+  Serial.println("Get Data");
 
   int statusCode = http.responseStatusCode();
-  Serial.print("Status Code: ");
-  Serial.println(statusCode);
   char response[100];
   http.responseBody().toCharArray(response, 100);
   sscanf(response, "[%d,%d,%d,%d]", &spot_ids[0], &spot_ids[1], &spot_ids[2], &spot_ids[3]);
-
-  Serial.print("id 1: ");
-  Serial.println(spot_ids[0]);
-  Serial.print("id 2: ");
-  Serial.println(spot_ids[1]);
-  Serial.print("id 3: ");
-  Serial.println(spot_ids[2]);
-  Serial.print("id 4: ");
-  Serial.println(spot_ids[3]);
-
+  Serial.println("response");
   return statusCode;
 }
