@@ -60,12 +60,13 @@ void SensorArray ::LEDsetup() {
 }
 
 void SensorArray ::setLED(int index, int status) {
+  
   if (status == 0) {
     setColor(0, 255, 0, index);  //Green
   } else if (status == 1) {
     setColor(255, 0, 0, index);  //Red
   } else {
-    setColor(255, 255, 0, index);  //yellow
+    setColor(255, 255, 255, index);  //yellow
   }
 }
 

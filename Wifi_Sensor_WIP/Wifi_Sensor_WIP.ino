@@ -21,7 +21,7 @@ SensorArray sensorArray_LED = SensorArray();
 char ssid[] = SECRET_SSID;
 WifiConnection wifiConnection_HTTP(ssid);
 
-int* is_reserved;
+int* is_reserved = new int[4];
 volatile bool timerFlag = false;
 
 void setup() {
@@ -39,12 +39,12 @@ void setup() {
 
   // Wifi connection
   Serial.println("WiFi connection begin");
-  wifiConnection_HTTP.begin();             //Set up WiFi connection
+  wifiConnection_HTTP.begin();  //Set up WiFi connection
   int responseCode = 0;
-  while (responseCode != 200){
-      responseCode = wifiConnection_HTTP.serverGetSpotIds();
-      Serial.println(responseCode);
-      Serial.println("After GET");  // GET request for spot ids.
+  while (responseCode != 200) {
+    responseCode = wifiConnection_HTTP.serverGetSpotIds();
+    Serial.println(responseCode);
+    Serial.println("After GET");  // GET request for spot ids.
   }
   wifiConnection_HTTP.idFlag = true;
 }
@@ -53,7 +53,7 @@ void loop() {
   Serial.println("Entered main loop");
   bool* is_occupied_arr = sensorArray_LED.getStatus();
   is_reserved = wifiConnection_HTTP.serverUpdateSpot(is_occupied_arr, wifiConnection_HTTP.spot_ids);  // post request posts the sensor data to a spot
-  
+
   // Take measurements and print their values
   for (int i = 0; i < 4; i++) {
     sensorArray_LED.setStatus(sensorArr[i], i);
@@ -62,6 +62,8 @@ void loop() {
 
   is_occupied_arr = sensorArray_LED.getStatus();
   for (int i = 0; i < 4; i++) {
+    // Serial.print("isReserved from Server: ");
+    // Serial.println(is_reserved[i]);
     if (is_reserved[i] == 1) {        // checks if the server has the spot reserved
       sensorArray_LED.setLED(i, 2);   // if the spot is reserved then turn yellow
     } else if (is_occupied_arr[i]) {  //checks if our system has the spot as occupied or open
@@ -69,6 +71,6 @@ void loop() {
     } else {
       sensorArray_LED.setLED(i, 0);  //if the spot is open turn green
     }
-    delay(500); //Eventually delete but for troubleshooting leave
+    // delay(500);  //Eventually delete but for troubleshooting leave
   }
 }

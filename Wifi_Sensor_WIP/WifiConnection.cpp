@@ -114,13 +114,13 @@ void WifiConnection ::reconnect() {
 // HTTP STUFF-----------------------------------------------
 //HTTP Requests
 WiFiClient wifi;
-char host[] = "10.48.8.116";
+char host[] = "10.48.8.121";
 
 HttpClient http(wifi, host, 5000);
 
-int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
+int* WifiConnection::serverUpdateSpot(bool* is_occupied, int* spot_ids){
 
-  int* isReservedInt;
+  static int isReservedInt[4];
   char isReserved[25];
   String contentType = "application/json";
 
@@ -136,8 +136,8 @@ int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
     strcat(postInfo, spotInfoBuff);
   }
 
-  Serial.print("POST INFO: ");
-  Serial.println(postInfo);
+  // Serial.print("POST INFO: ");
+  // Serial.println(postInfo);
 
   // Serial.println("making POST request");
   http.post("/updateSpot", contentType, postInfo);
@@ -145,14 +145,14 @@ int* WifiConnection ::serverUpdateSpot(bool* is_occupied, int* spot_ids) {
 
   // read the status code and body of the response
   int statusCode = http.responseStatusCode();
-  Serial.print("responseBody: ");
+  // Serial.print("responseBody: ");
 
   http.responseBody().toCharArray(isReserved, 25);;
   Serial.print("Status code: ");
   Serial.println(statusCode);
 
-  Serial.print("isReserved: ");
-  Serial.println(isReserved);
+  // Serial.print("isReserved: ");
+  // Serial.println(isReserved);
   sscanf(isReserved, "[%d,%d,%d,%d]", &isReservedInt[0], &isReservedInt[1], &isReservedInt[2], &isReservedInt[3]);
   return isReservedInt;
 }
